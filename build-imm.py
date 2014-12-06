@@ -9,6 +9,9 @@ start = ['ATG']
 stop = ['TAA', 'TAG', 'TGA']
 nts = ['A', 'T', 'C', 'G']
 
+revCompStart = ['CAT']
+revCompStop = ['TTA', 'CTA', 'TCA']
+
 scoreThreshold = -1000
 
 maxLength = 8
@@ -19,6 +22,15 @@ for o in xrange(numOrfs):
     for l in xrange(maxLength+1):
         countsCurr.append(dict())
     counts.append(countsCurr)
+
+orfMinLength = 50
+
+# Save imm scores once we've calculated them
+immScores = []
+for i in xrange(6):
+    immScores.append([])
+    for j in xrange(maxLength):
+        immScores[i].append(dict())
 
 # If a kmer has at least this many occurences, don't use a smaller kmer
 countThreshold = 400
@@ -35,29 +47,44 @@ def findLongORFs(genome):
     minLen = 500
     orfs = []
 
+    counts = [0,0]
+
+    startPos = None
     for i in xrange(3):
-        startPos = None
         for nt in xrange(i, len(genome), 3):
-            codon = genome[nt:nt+3] 
-            if codon in start:
+            codon = genome[nt:nt+3]
+            if len(codon) < 3:
+                continue
+
+            if startPos == None and codon in start:
                 startPos = nt
-            elif codon in stop and not startPos == None:
-                if nt-startPos >= minLen:
-                    orfs += [(genome[startPos : nt], 0)]
+            elif not startPos == None and codon in stop:
+                if nt+3-startPos >= minLen:
+                    orfs += [(genome[startPos : nt+3], 0)]
+                    counts[0] += 1
+                startPos = None
+            elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
                 startPos = None
 
-    rev = reverseComplement(genome)
     for i in xrange(3):
         startPos = None
-        for nt in xrange(i, len(rev), 3):
-            codon = rev[nt:nt+3] 
-            if codon in start:
+        for pos in xrange(i, len(genome), 3):
+            nt = len(genome)-pos
+            codon = genome[nt-3:nt]
+            if len(codon) < 3:
+                continue
+
+            if startPos == None and codon in revCompStart:
                 startPos = nt
-            elif codon in stop and not startPos == None:
-                if nt-startPos >= minLen:
-                    orfs += [(genome[startPos : nt], 0)]
+            elif not startPos == None and codon in revCompStop:
+                if startPos-nt+3 >= minLen:
+                    orfs += [(genome[nt-3 : startPos], 3)]
+                    counts[1] += 1
+                startPos = None
+            elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
                 startPos = None
 
+    print counts
     return orfs
 
 def reverseComplement(seq):
@@ -72,12 +99,15 @@ def reverseComplement(seq):
         elif c == 'T':
             rev = 'A' + rev
         else:
-            print 'Unrecognized nucleotide: ' + c
-            exit()
+            rev = 'N' + rev
+            #print 'Unrecognized nucleotide: ' + c
+            #exit()
     return rev
 
 def buildIMM(seqs):
-    for (seq,rf) in seqs:
+    # frame = 0 (forward) or 3 (reverse complement)
+    for (seq,frame) in seqs:
+        rf = frame
         for i in xrange(len(seq)):
             for l in xrange(min(maxLength+1, i+1)):
                 kmer = seq[i-l:i+1]
@@ -85,9 +115,8 @@ def buildIMM(seqs):
                     counts[rf][l][kmer] += 1
                 else:
                     counts[rf][l][kmer] = 1
-            rf = (rf+1) % 3
+            rf = (rf+1) % 3 + frame
 
-    print len(counts)
     print counts[0][0]
     print counts[1][0]
     print counts[2][0]
@@ -101,34 +130,66 @@ def glimmer(genome):
     for i in xrange(6):
         orfs.append([])
 
+    startPos = None
     for i in xrange(3):
-        starts = []
+        startPos = None
         for nt in xrange(i, len(genome), 3):
-            codon = genome[nt:nt+3] 
-            if codon in start:
-                starts += [nt]
-            elif codon in stop and len(starts) > 0:
-                orfs[i] += [(starts[0], nt)]
-                starts = []
+            codon = genome[nt:nt+3]
+            if len(codon) < 3:
+                continue
+                
+            if startPos == None and codon in start:
+                startPos = nt
+            elif not startPos == None and codon in stop:
+                orfs[i] += [(startPos, nt+3)]
+                startPos = None
+            elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
+                startPos = None
 
-    rev = reverseComplement(genome)
     for i in xrange(3):
-        starts = []
-        for nt in xrange(i, len(rev), 3):
-            codon = rev[nt:nt+3] 
-            if codon in start:
-                starts += [nt]
-            elif codon in stop and len(starts) > 0:
-                orfs[i+3] += [(starts[0], nt)]
-                starts = []
+        startPos = None
+        for pos in xrange(i, len(genome), 3):
+            nt = len(genome)-pos
+            codon = genome[nt-3:nt]
+            if len(codon) < 3:
+                continue
+
+            if startPos == None and codon in revCompStart:
+                startPos = nt
+            elif not startPos == None and codon in revCompStop:
+                orfs[i+3] += [(nt-3, startPos)]
+                startPos = None
+            elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
+                startPos = None
+
+    #with open('predicted.txt', 'w') as f:
+    #    for i in xrange(6):
+    #        for orf in orfs[i]:
+    #            f.write(str(orf[0]) + '\t' + str(orf[1]) + '\n')
+    #exit()
 
     # filter out bad-scoring orfs
     goodORFs = []
+
+    totals = [0]*6
+    approved = [0]*6
+
     for i in xrange(len(orfs)):
+        print 'Processing rf %d (%d)' % (i, len(orfs[i]))
+        
         for orf in orfs[i]:
             rfScores = score(orf)
-            if rfScores[0] > rfScores[1] and rfScores[0] > rfScores[2] and rfScores[0] > scoreThreshold:
+            if i < 3 and max(rfScores) == rfScores[0] and rfScores[0] > scoreThreshold:
                 goodORFs.append((orf[0], orf[1], i, rfScores[0]))
+                approved[i] += 1
+            elif i >= 3 and max(rfScores) == rfScores[3] and rfScores[3] > scoreThreshold:
+                goodORFs.append((orf[0], orf[1], i, rfScores[0]))
+                approved[i] += 1
+
+            totals[i] += 1
+
+    print 'Approved: ' + str(approved)
+    print 'Totals:   ' + str(totals)
 
 
     print '%d potential regions found' % len(goodORFs)
@@ -172,7 +233,7 @@ def glimmer(genome):
             f.write(str(orf[0]) + '\t' + str(orf[1]) + '\n')
 
 def score(orf):
-    # Score the given region in all 3 reading frames
+    # Score the given region in first 3 reading frames
     rfScores = []
     for rf in xrange(3):
         score = 0
@@ -180,9 +241,20 @@ def score(orf):
             score += math.log(imm(rf, genome[max(orf[0], x-maxLength+1) : x+1]))
             rf = (rf+1) % 3
         rfScores.append(score)
+
+    # Score the given region in reverse 3 reading frames
+    for rf in xrange(3):
+        score = 0
+        for x in xrange(orf[0], orf[1]):
+            score += math.log(imm(rf+3, genome[max(orf[0], x-maxLength+1) : x+1]))
+            rf = (rf+1) % 3
+        rfScores.append(score)
     return rfScores
 
 def imm(rf, seq):
+    if seq in immScores[rf][len(seq)-1]:
+        return immScores[rf][len(seq)-1][seq]
+
     if len(seq) == 1:
         return prob(rf, seq)
 
@@ -210,7 +282,10 @@ def imm(rf, seq):
             else:
                 wgt = 0
 
-    return wgt * prob(rf, seq) + (1-wgt) * imm(rf, seq[1:])
+    score = wgt * prob(rf, seq) + (1-wgt) * imm(rf, seq[1:])
+
+    immScores[rf][len(seq)-1][seq] = score
+    return score
 
 def prob(rf, seq):
     length = len(seq)-1
