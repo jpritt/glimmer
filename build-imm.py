@@ -12,7 +12,7 @@ nts = ['A', 'T', 'C', 'G']
 revCompStart = ['CAT']
 revCompStop = ['TTA', 'CTA', 'TCA']
 
-scoreThreshold = -1000
+scoreThreshold = -10000
 
 maxLength = 8
 numOrfs = 6
