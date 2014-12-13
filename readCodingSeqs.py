@@ -15,7 +15,10 @@ def readORFs(filename):
 
                 locTagStart = line.index('[location=') + 10
                 locTagEnd = line.index(']', locTagStart)
+
+                complement = False
                 if line[locTagStart:locTagStart+11] == 'complement(':
+                    complement = True
                     locTagStart += 11
                     locTagEnd -= 1
 
@@ -24,11 +27,14 @@ def readORFs(filename):
                     start = value[:value.index('..')]
                     end = value[value.index('..')+2:]
 
-                    orfs.append((start,end))
+                    if complement:
+                        orfs.append((int(start)-1,end))
+                    else:
+                        orfs.append((int(start)+1,end))
     return orfs
 
 orfs = readORFs(sys.argv[1])
 with open('trueORFs.txt', 'w') as f:
     for (a,b) in orfs:
-        f.write(str(a) + '\t' + str(b) + '\n')
+        f.write(str(int(a)) + '\t' + str(b) + '\n')
 

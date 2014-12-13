@@ -9,44 +9,102 @@ def readFASTA(filename):
                 genome += line.rstrip()
     return genome
 
-#genome = readFASTA('~/Genomics/genomes/Haemophilus_influenzae/PittGG/sequence.fasta')
-#genome = readFASTA(sys.argv[1])
-#print genome[2915:4565]
-#exit()
+def matches(orfA, orfB):
+    if orfA[0] == orfB[0] or orfA[1] == orfB[1]:
+        return True
+    else:
+        return False
 
-tp = 0
-fp = 0
-fn = 0
+    if orfA[0] < orfB[1] and orfA[1] > orfB[0]:
+        return True
+        olap = min(orfA[1],orfB[1]) - max(orfA[0],orfB[0])
+        if olap > 0.75*(orfA[1]-orfA[0]) and olap > 0.75*(orfB[1]-orfB[0]):
+            return True
+    return False
 
-true = []
-with open(sys.argv[1], 'r') as f:
-    for line in f:
-        orf = line.rstrip().split('\t')
-        true.append((int(orf[0]), int(orf[1])))
+    if orfA[0] == orfB[0] and orfA[1] == orfB[1]:
+        return True
+    elif orfA[0] == orfB[0]:
+        if abs(orfA[1]-orfB[1]) < 0.1*min(orfA[1]-orfA[0], orfB[1]-orfB[0]):
+            return True
+    elif orfA[1] == orfB[1]:
+        if abs(orfA[0]-orfB[0]) < 0.1*min(orfA[1]-orfA[0], orfB[1]-orfB[0]):
+            return True
+    return False
 
-pred = []
-with open(sys.argv[2], 'r') as f:
-    for line in f:
-        orf = line.rstrip().split('\t')
-        pred.append((int(orf[0]), int(orf[1])))
+def compare(trueORFs, predORFs):
+    true = []
+    with open(trueORFs, 'r') as f:
+        for line in f:
+            orf = line.rstrip().split('\t')
+            true.append((int(orf[0]), int(orf[1])))
 
-for orf in pred:
-    found = False
-    for o in true:
-        if orf[1] == o[1]:# and orf[0] < o[0]:
-            tp += 1
-            found = True
-            break
-    if not found:
-        fp += 1
-for orf in true:
-    found = False
-    for o in pred:
-        if orf[1] == o[1] and orf[0] < o[0]:
-            found = True
-            break
-fn = len(true) - tp
+    pred = []
+    susp = []
+    with open(predORFs, 'r') as f:
+        for line in f:
+            if line[0] == '*':
+                orf = line[1:].rstrip().split('\t')
+                susp.append((int(orf[0]), int(orf[1])))
+            else:
+                orf = line.rstrip().split('\t')
+                pred.append((int(orf[0]), int(orf[1])))
 
-print 'TP: %d' % tp
-print 'FP: %d' % fp
-print 'FN: %d' % fn
+    '''
+    tp = 0
+    fp = 0
+    fn = 0
+    for orf in pred:
+        found = False
+        for o in true:
+            if matches(orf, o):
+                tp += 1
+                found = True
+                break
+        if not found:
+            fp += 1
+    for orf in true:
+        found = False
+        for o in pred:
+            if matches(orf, o):
+                found = True
+                break
+        if not found:
+            fn += 1
+    #fn = len(true) - tp
+
+    print '  Approved only:'
+    print '    %% found: %0.2f (%d)' % (float(100*tp)/len(true), tp)
+    print '    Genes missed: %d' % fn
+    print '    Additional genes: %d' % fp
+    '''
+
+    
+    pred = pred + susp
+    tp = 0
+    fp = 0
+    fn = 0
+    for orf in pred:
+        found = False
+        for o in true:
+            if matches(orf, o):
+                tp += 1
+                found = True
+                break
+        if not found:
+            fp += 1
+    for orf in true:
+        found = False
+        for o in pred:
+            if matches(orf, o):
+                found = True
+                break
+        if not found:
+            fn += 1
+
+    print '  All predicted:'
+    print '    %% found: %0.2f (%d)' % (float(100*tp)/len(true), tp)
+    print '    Genes missed: %d' % fn
+    print '    Additional genes: %d' % fp
+    
+
