@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+import math
 
 class HIMMTrain:
 
@@ -19,6 +20,9 @@ class HIMMTrain:
         for i in xrange(4):
             self.singleProbs.append({'A':0, 'C':0, 'G':0, 'T':0})
 
+        self.totalLen = [0,0]
+        self.num = [0,0]
+
     def train(self, gene, exonMask):
         '''
             gene - string of nucleotides (A,C,G,T only)
@@ -26,13 +30,19 @@ class HIMMTrain:
         '''
 
         rf = 0
+        start = 0
         for i in xrange(1, len(gene)):
-            if exonMask[i-1] == 1:
+            if not exonMask[i] == exonMask[i-1]:
+                self.totalLen[int(exonMask[i-1])] += i - start
+                self.num[int(exonMask[i-1])] += 1
+                start = i
+
+            if exonMask[i-1] == '1':
                 prevState = rf
             else:
                 prevState = 3
 
-            if exonMask[i] == 1:
+            if exonMask[i] == '1':
                 rf = (rf+1) % 3
                 newState = rf
             else:
@@ -47,4 +57,10 @@ class HIMMTrain:
 
             self.singleProbs[newState][gene[i]] += 1
 
-        print self.singleProbs
+        self.totalLen[int(exonMask[-1])] += len(gene) - start
+        self.num[int(exonMask[-1])] += 1
+
+    def getProbSwitch(self):
+        eToI = float(self.num[0]) / float(self.totalLen[0])
+        iToE = float(self.num[1]) / float(self.totalLen[1])
+        return [[math.log(1-eToI, 2), math.log(eToI, 2)], [math.log(iToE, 2), math.log(1-iToE, 2)]]
