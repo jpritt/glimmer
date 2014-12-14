@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  13 DEC 2014 17:56
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 11:43
 entering extended mode
 **writeup.tex
 
@@ -502,7 +502,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 35--36
  []
 
 
-Underfull \hbox (badness 1158) in paragraph at lines 42--43
+Underfull \hbox (badness 1158) in paragraph at lines 42--44
 \OT1/ptm/m/n/10.95 Con-sec-u-tive read-ing frames share the DNA se-
  []
 
@@ -520,9 +520,6 @@ Underfull \hbox (badness 1721) in paragraph at lines 56--57
 Underfull \hbox (badness 10000) in paragraph at lines 56--57
 
  []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 Underfull \hbox (badness 1253) in paragraph at lines 77--78
@@ -555,51 +552,28 @@ Underfull \hbox (badness 2261) in paragraph at lines 81--82
 []\OT1/ptm/m/n/10.95 As men-tioned, a higher-order Markov chain
  []
 
-
-Underfull \vbox (badness 1975) has occurred while \output is active []
-
- [2]
-Underfull \hbox (badness 1072) in paragraph at lines 100--102
-\OT1/ptm/m/n/10.95 con-fi-dence mea-sure of how close the es-ti-mated
+[2]
+Underfull \hbox (badness 1057) in paragraph at lines 101--103
+\OT1/ptm/m/n/10.95 The weight at-tached to $\OML/cmm/m/it/10.95 P[]\OT1/cmr/m/n
+/10.95 (\OML/cmm/m/it/10.95 S[]\OT1/cmr/m/n/10.95 )$ \OT1/ptm/m/n/10.95 can be 
+seen as
  []
 
 
-Underfull \hbox (badness 2088) in paragraph at lines 100--102
-\OT1/ptm/m/n/10.95 check-ing the fre-quency of oc-cur-rences for the
+Underfull \hbox (badness 6978) in paragraph at lines 101--103
+\OT1/ptm/m/n/10.95 and $\OML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/
+10.95 S[]; t\OT1/cmr/m/n/10.95 )$ \OT1/ptm/m/n/10.95 with the pre-vi-ously cal-
+cu-lated
  []
 
 
-Underfull \hbox (badness 1242) in paragraph at lines 100--102
-\OT1/ptm/m/n/10.95 k-mer se-quence. When the fre-quency ex-ceeds
- []
-
-
-Underfull \hbox (badness 3758) in paragraph at lines 100--102
-\OT1/ptm/m/n/10.95 with the pre-vi-ously cal-cu-lated IMM prob-a-bil-
- []
-
-
-Underfull \hbox (badness 2564) in paragraph at lines 100--102
-\OT1/ptm/m/n/10.95 i-ties us-ing the next shorter con-text, which is
- []
-
-
-Overfull \hbox (145.25041pt too wide) in paragraph at lines 100--102
-$\OML/cmm/m/it/10.95 IMM[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 S[]; a\OT1/cm
-r/m/n/10.95 )\OML/cmm/m/it/10.95 ; IMM[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95
- S[]; c\OT1/cmr/m/n/10.95 )\OML/cmm/m/it/10.95 ; IMM[]\OT1/cmr/m/n/10.95 (\OML/
-cmm/m/it/10.95 S[]; g\OT1/cmr/m/n/10.95 )\OML/cmm/m/it/10.95 ; IMM[]\OT1/cmr/m/
-n/10.95 (\OML/cmm/m/it/10.95 S[]; t\OT1/cmr/m/n/10.95 )$\OT1/ptm/m/n/10.95 .
- []
-
-
-Overfull \hbox (32.19011pt too wide) detected at line 108
+Overfull \hbox (32.19011pt too wide) detected at line 109
 \OML/cmm/m/it/10.95 []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 S[]\OT1/cmr/m/n/
 10.95 ) = []
  []
 
 
-Overfull \hbox (58.07542pt too wide) detected at line 113
+Overfull \hbox (58.07542pt too wide) detected at line 114
 \OML/cmm/m/it/10.95 IMM[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 S[]\OT1/cmr/m/
 n/10.95 ) = \OML/cmm/m/it/10.95 []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 S[]\
 OT1/cmr/m/n/10.95 ) \OMS/cmsy/m/n/10.95  \OML/cmm/m/it/10.95 P[]\OT1/cmr/m/n/1
@@ -609,9 +583,19 @@ ML/cmm/m/it/10.95 []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 S[]\OT1/cmr/m/n/10
 cmm/m/it/10.95 S[]\OT1/cmr/m/n/10.95 )
  []
 
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no ™ in font ptmr7t!
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no ™ in font ptmr7t!
+[3]
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no ™ in font ptmr7t!
 
-Overfull \hbox (17.4803pt too wide) in paragraph at lines 122--145
- [] 
+Underfull \hbox (badness 5133) in paragraph at lines 158--159
+\OT1/ptm/m/n/10.95 While not men-tioned in the orig-i-nal GLIM-
  []
 
 Missing character: There is no â in font ptmr7t!
@@ -620,15 +604,16 @@ Missing character: There is no ™ in font ptmr7t!
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
-[3] [4
-
-]
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no ™ in font ptmr7t!
+[4]
 ("C:\Users\YongFang\Desktop\Academics\Machine learning\project\glimmer\writeup\
 writeup.aux") ) 
 Here is how much of TeX's memory you used:
  11686 strings out of 493921
  234304 string characters out of 3144866
- 267813 words of memory out of 3000000
+ 265828 words of memory out of 3000000
  14763 multiletter control sequences out of 15000+200000
  23502 words of font info for 57 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
@@ -647,7 +632,7 @@ s (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files
  2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
 type1/urw/times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/t
 imes/utmri8a.pfb>
-Output written on writeup.pdf (4 pages, 152964 bytes).
+Output written on writeup.pdf (4 pages, 156466 bytes).
 PDF statistics:
  71 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
