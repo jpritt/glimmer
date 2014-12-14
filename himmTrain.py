@@ -2,7 +2,7 @@
 
 class HIMMTrain:
 
-    def __init__(maxLen):
+    def __init__(self, maxLen):
         self.maxLength = maxLen
 
         # 4 states: intron, exon_rf1, exon_rf2, exon_rf3
@@ -17,9 +17,9 @@ class HIMMTrain:
 
         self.singleProbs = []
         for i in xrange(4):
-            self.singleProbs.append(dict())
+            self.singleProbs.append({'A':0, 'C':0, 'G':0, 'T':0})
 
-    def train(gene, exonMask):
+    def train(self, gene, exonMask):
         '''
             gene - string of nucleotides (A,C,G,T only)
             exonMask - string of 1s (exon) and 0s (intron) of same length as genome
@@ -45,9 +45,6 @@ class HIMMTrain:
                 else:
                     self.counts[prevState][newState][l][seq] = 1
 
-            if gene[i] in self.singleProbs[newState]:
-                self.singleProbs[newState] += 1
-            else:
-                self.singleProbs[newState] = 1
+            self.singleProbs[newState][gene[i]] += 1
 
-        return self.counts, self.singleProbs
+        print self.singleProbs

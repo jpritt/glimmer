@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import math
-import numpy
+import numpy as np
+import scipy.stats
 
 class HIMM(object):
     ''' Simple Hidden Markov Model implementation.  User provides
@@ -9,7 +10,7 @@ class HIMM(object):
         for those table entries.  States and emissions are represented
         with single characters.  Emission symbols comes from a finite.  '''
     
-    def __init__(self, counts, immProbs, singleProbs, maxLength):
+    def __init__(self, counts, singleProbs, maxLength):
         ''' Initialize the HIMM given 
             counts - counts of each kmer
             immProbs - empty, to be filled out with calculated IMM probs
@@ -38,8 +39,8 @@ class HIMM(object):
         # 6 states: exon_rf1, exon_rf2, exon_rf3, intron_rf1, intron_rf2, intron_rf3
         nrow = 6
         ncol = len(x)
-        mat   = numpy.zeros(shape=(nrow, ncol), dtype=float) # prob
-        matTb = numpy.zeros(shape=(nrow, ncol), dtype=int)   # backtrace
+        mat   = np.zeros(shape=(nrow, ncol), dtype=float) # prob
+        matTb = np.zeros(shape=(nrow, ncol), dtype=int)   # backtrace
 
         # Fill in first column
         # Every gene starts in exon_rf1
@@ -99,14 +100,14 @@ class HIMM(object):
 
     def imm(self, oldState, newState, seq):
         if seq in self.immProbs[oldState][newState][len(seq)-1]:
-            return self.immProbs[oldState][newState][len(seq)-1]
+            return self.immProbs[oldState][newState][len(seq)-1][seq]
 
         prefix = seq[:-1]
 
         if len(seq) == 1:
             probs = [0]*4
             for i in xrange(4):
-                self.immProbs[oldState][newState][0][nts[i]] = self.singleProbs[newState][seq]
+                self.immProbs[oldState][newState][0][self.nts[i]] = self.singleProb(newState, self.nts[i])
             return self.immProbs[oldState][newState][0][seq]
 
         length = len(seq)-1
@@ -116,14 +117,14 @@ class HIMM(object):
             currCounts = [1]*4
             currTotal = 4
             for i in xrange(4):
-                tempSeq = prefix + nts[i]
+                tempSeq = prefix + self.nts[i]
                 if tempSeq in self.counts[oldState][newState][length]:
                     currCounts[i] += self.counts[oldState][newState][length][tempSeq]
                     currTotal += self.counts[oldState][newState][length][tempSeq]
 
             nextProbs = [0]*4
             for i in xrange(4):
-                nextProbs[i] = self.imm(oldState, newState, prefix[1:]+nts[i])
+                nextProbs[i] = self.imm(oldState, newState, prefix[1:]+self.nts[i])
             
             d = scipy.stats.chi2_contingency(np.array([currCounts, nextProbs]))[1]
 
@@ -137,11 +138,11 @@ class HIMM(object):
 
         probs = [0]*4
         for i in xrange(4):
-            probs[i] = wgt * self.prob(oldState, newState, prefix+nts[i]) + (1-wgt) * self.imm(oldState, newState, prefix[1:]+nts[i])
+            probs[i] = wgt * self.prob(oldState, newState, prefix+self.nts[i]) + (1-wgt) * self.imm(oldState, newState, prefix[1:]+self.nts[i])
         totalProb = sum(probs)
 
         for i in xrange(4):
-            self.immProbs[oldState][newState][len(seq)-1][prefix+nts[i]] = float(probs[i]) / totalProb
+            self.immProbs[oldState][newState][len(seq)-1][prefix+self.nts[i]] = float(probs[i]) / totalProb
 
         return self.immProbs[oldState][newState][len(seq)-1][seq]
 
@@ -149,13 +150,19 @@ class HIMM(object):
         length = len(seq)-1
 
         # Count all possible next nucleotides, with +1 smoothing
-        totalNum = 0
-        for n in nts:
+        totalNum = 4
+        for n in self.nts:
             if seq[:-1]+n in self.counts[oldState][newState][length]:
                 totalNum += self.counts[oldState][newState][length][seq[:-1]+n]
-            else:
-                totalNum += 1
+
         if not seq in self.counts[oldState][newState][length]:
             return 1.0 / float(totalNum)
         else:
-            return float(self.counts[oldState][newState][length][seq]) / float(totalNum)
+            return float(1+self.counts[oldState][newState][length][seq]) / float(totalNum)
+
+    def singleProb(self, state, nt):
+        totalNum = 4
+        for n in self.nts:
+            totalNum += self.singleProbs[newState][n]
+
+        return float(1+self.singleProbs[newState][nt]) / float(totalNum)

@@ -559,16 +559,15 @@ def prob(rf, seq, counts):
     length = len(seq)-1
 
     # Count all possible next nucleotides, with +1 smoothing
-    totalNum = 0
+    totalNum = 4
     for n in nts:
         if seq[:-1]+n in counts[rf][length]:
             totalNum += counts[rf][length][seq[:-1]+n]
-        else:
-            totalNum += 1
+
     if not seq in counts[rf][length]:
         return 1.0 / float(totalNum)
     else:
-        return float(counts[rf][length][seq]) / float(totalNum)
+        return float(1+counts[rf][length][seq]) / float(totalNum)
 
 def runIMM():
     print 'IMM max length %d:' % maxLength
@@ -707,9 +706,9 @@ for i in xrange(8):
 '''
 
 maxLength = 8
-#runIMM()
+runIMM()
 
-runMC(6)
+#runMC(6)
 
 #runIterativeIMM()
 #runIterativeMC(6)
