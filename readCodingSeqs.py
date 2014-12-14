@@ -7,7 +7,6 @@ def readORFs(filename):
     with open(filename, 'r') as f:
         for line in f:
             if line[0] == '>':
-
                 proteinTagStart = line.index('[protein=')
                 proteinTagEnd = line.index(']', proteinTagStart)
                 if 'hypothetical' in line[proteinTagStart:proteinTagEnd]:
@@ -22,10 +21,44 @@ def readORFs(filename):
                     locTagStart += 11
                     locTagEnd -= 1
 
+                join = False
+                if line[locTagStart:locTagStart+5] == 'join(':
+                    join = True
+                    locTagStart += 5
+                    locTagEnd -= 1
+
+
+                while not line[locTagStart].isdigit():
+                    locTagStart += 1
+                while not line[locTagEnd-1].isdigit():
+                    locTagEnd -= 1
+
                 if locTagEnd > locTagStart:
                     value = line[locTagStart:locTagEnd]
-                    start = value[:value.index('..')]
-                    end = value[value.index('..')+2:]
+
+                    startLocA = value.find('..')
+                    startLocB = value.find(',')
+                    if startLocB < 0 or (startLocB > startLocA):
+                        start = value[:startLocA]
+                    elif startLocA < 0 or (startLocB < startLocA):
+                        start = value[:startLocB]
+                    else:
+                        print 'Error! Line:'
+                        print value
+                        exit()
+
+                    while not start[-1].isdigit():
+                        start = start[:-1]
+
+                    endLocA = value.rfind('..')
+                    endLocB = value.rfind(',')
+                    end = value[max(endLocA, endLocB)+2:]
+                    while not end[0].isdigit():
+                        end = end[1:]
+                    #if join:
+                    #    end = value[value.rfind('..')+2:]
+                    #else:
+                    #    end = value[value.index('..')+2:]
 
                     if complement:
                         orfs.append((int(start)-1,end))

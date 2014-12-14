@@ -65,7 +65,7 @@ def findLongORFs(genome):
             if len(codon) < 3:
                 continue
 
-            if startPos == None and codon in start:
+            if startPos == None:# and codon in start:
                 startPos = nt
             elif not startPos == None and codon in stop:
                 if nt+3-startPos >= minLen:
@@ -83,7 +83,7 @@ def findLongORFs(genome):
             if len(codon) < 3:
                 continue
 
-            if startPos == None and codon in revCompStart:
+            if startPos == None:# and codon in revCompStart:
                 startPos = nt
             elif not startPos == None and codon in revCompStop:
                 if startPos-nt+3 >= minLen:
@@ -364,13 +364,15 @@ def glimmer(genome, counts, immScores, mcLength=None):
             else:
                 rfScores = scoreMarkovChain(orf, mcLength, counts)
 
-            length = orf[1]-orf[0]
+            # Find largest and second largest scores
+            maxScore = max(rfScores)
 
-            if i < 3 and max(rfScores) == rfScores[0] and rfScores[0]/length > scoreThreshold:
-                goodORFs.append((orf[0], orf[1], i, rfScores[0]))
+            length = orf[1]-orf[0]
+            if i < 3 and maxScore == rfScores[0] and rfScores[0]/length > scoreThreshold:
+                goodORFs.append((orf[0], orf[1], i, rfScores[0]/length))
                 approved[i] += 1
-            elif i >= 3 and max(rfScores) == rfScores[3] and rfScores[3]/length > scoreThreshold:
-                goodORFs.append((orf[0], orf[1], i, rfScores[0]))
+            elif i >= 3 and maxScore == rfScores[3] and rfScores[3]/length > scoreThreshold:
+                goodORFs.append((orf[0], orf[1], i, rfScores[3]/length))
                 approved[i] += 1
             
             '''
@@ -408,7 +410,6 @@ def glimmer(genome, counts, immScores, mcLength=None):
                 break
             j += 1
         i += 1
-
 
     suspected = [0]*len(goodORFs)
     for i in xrange(len(goodORFs)):
@@ -492,26 +493,48 @@ def imm(rf, seq, counts, immScores):
     if seq in immScores[rf][len(seq)-1]:
         return immScores[rf][len(seq)-1][seq]
 
+    prefix = seq[:-1]
+
     if len(seq) == 1:
-        return prob(rf, seq, counts)
+        probs = [0]*4
+        for i in xrange(4):
+            immScores[rf][0][prefix+nts[i]] = prob(rf, prefix+nts[i], counts)
+        return immScores[rf][len(seq)-1][seq]
 
     length = len(seq)-1
     #if seq in counts[rf][length] and counts[rf][length][seq] > countThreshold:
-    prefix = seq[:-1]
     if prefix in counts[rf][length-1] and counts[rf][length-1][prefix] > countThreshold:
         wgt = 1
     else:
+        '''
         currCounts = [1]*4
         nextCounts = [1]*4
         for i in xrange(4):
             tempSeq = prefix + nts[i]
             if tempSeq in counts[rf][length]:
                 currCounts[i] += counts[rf][length][tempSeq]
+
             tempSeq = prefix[1:] + nts[i]
             if tempSeq in counts[rf][length-1]:
                 nextCounts[i] += counts[rf][length-1][tempSeq]
+        '''
+
+        currCounts = [1]*4
+        currTotal = 4
+        for i in xrange(4):
+            tempSeq = prefix + nts[i]
+            if tempSeq in counts[rf][length]:
+                currCounts[i] += counts[rf][length][tempSeq]
+                currTotal += counts[rf][length][tempSeq]
+
+        #currProbs = [0]*4
+        nextProbs = [0]*4
+        for i in xrange(4):
+            #currProbs[i] = float(currCounts[i]) / float(currTotal)
+            nextProbs[i] = imm(rf, prefix[1:]+nts[i], counts, immScores)
         
-        d = 1 - scipy.stats.chi2_contingency(np.array([currCounts, nextCounts]))[1]
+        #d = 1 - scipy.stats.chi2_contingency(np.array([currCounts, nextCounts]))[1]
+        d = scipy.stats.chi2_contingency(np.array([currCounts, nextProbs]))[1]
 
         if d < 0.5:
             wgt = 0
@@ -521,10 +544,16 @@ def imm(rf, seq, counts, immScores):
             else:
                 wgt = 0
 
-    score = wgt * prob(rf, seq, counts) + (1-wgt) * imm(rf, seq[1:], counts, immScores)
+    #score = wgt * prob(rf, seq, counts) + (1-wgt) * imm(rf, seq[1:], counts, immScores)
+    probs = [0]*4
+    for i in xrange(4):
+        probs[i] = wgt * prob(rf, prefix+nts[i], counts) + (1-wgt) * imm(rf, prefix[1:]+nts[i], counts, immScores)
+    totalProb = sum(probs)
 
-    immScores[rf][len(seq)-1][seq] = score
-    return score
+    for i in xrange(4):
+        immScores[rf][len(seq)-1][prefix+nts[i]] = float(probs[i]) / totalProb
+
+    return immScores[rf][len(seq)-1][seq]
 
 def prob(rf, seq, counts):
     length = len(seq)-1
@@ -574,11 +603,15 @@ def runMC(length):
     compareResults.compare('trueORFs.txt', 'predicted.txt')
     print ''
 
-def runIterativeIMM(maxImmLength):
-    print 'Iterative IMM max length %d:' % maxImmLength
-    maxLength = maxImmLength
+def runIterativeIMM():
+    ''' Repeatedly train on the set of predicted ORFs, and use the IMM predict a new set of ORFs.
+        Continue until the set of predicted ORFs does not change.
+    '''
+
+    print 'Iterative IMM max length %d:' % maxLength
 
     coding, noncoding = findLongORFs(genome)
+    oldORFs = []
     i = 0
     for x in xrange(10):
         i += 1
@@ -600,12 +633,24 @@ def runIterativeIMM(maxImmLength):
         compareResults.compare('trueORFs.txt', 'predicted.txt')
         print ''
 
-        coding, noncoding = updateORFs(approved+suspect)
+        newORFs = approved+suspect
+        if noChange(oldORFs, newORFs):
+            print '  Converged'
+            break
+        else:
+            coding, noncoding = updateORFs(approved)
+            oldORFs = newORFs
+    print 'Completed after %d iterations' % i
 
 def runIterativeMC(length):
+    ''' Repeatedly train on the set of predicted ORFs, and use a fixed-length MM predict a new set of ORFs.
+        Continue until the set of predicted ORFs does not change.
+    '''
+
     print 'Iterative MC length %d:' % length
 
     coding, noncoding = findLongORFs(genome)
+    oldORFs = []
     i = 0
     for x in xrange(10):
         i += 1
@@ -614,11 +659,11 @@ def runIterativeMC(length):
         counts, immScores = init()
         startTime = time.time()
         print '    Training on %d coding, %d noncoding...' % (len(coding), len(noncoding))
-        counts = buildMC(counts, coding, noncoding)
+        counts = buildMarkovChain(counts, coding, noncoding, length)
         buildTime = time.time()
         print '      Done, %0.2fs' % (buildTime-startTime)
-        print '    Recalculating ORFs...'
-        approved, suspect = glimmer(genome, length, counts, immScores)
+        print '    Calculating ORFs...'
+        approved, suspect = glimmer(genome, counts, immScores, length)
         endTime = time.time()
         print '      Done, %0.2fs' % (endTime-buildTime)
         print '    Found %d approved, %d suspected' % (len(approved), len(suspect))
@@ -627,17 +672,31 @@ def runIterativeMC(length):
         compareResults.compare('trueORFs.txt', 'predicted.txt')
         print ''
 
-        coding, noncoding = updateORFs(approved+suspect)
+        newORFs = approved+suspect
+        if noChange(oldORFs, newORFs):
+            print '  Converged'
+            break
+        else:
+            coding, noncoding = updateORFs(approved)
+            oldORFs = newORFs
+    print 'Completed after %d iterations' % i
 
+def noChange(oldORFs, newORFs):
+    if not len(oldORFs) == len(newORFs):
+        return False
+
+    oldORFs.sort()
+    newORFs.sort()
+    return (oldORFs == newORFs)
 
 genome = readFASTA(sys.argv[1])
 
 
 #for i in xrange(6,maxLength+1):
 #    runMC(i)
-for i in xrange(1,maxLength+1):
-    maxLength = i
-    runIMM()
+#for i in xrange(1,maxLength+1):
+#    maxLength = i
+#    runIMM()
 
 '''
 for i in xrange(8):
@@ -646,6 +705,11 @@ for i in xrange(8):
     print 'scoreThreshold = %0.2f' % (scoreThreshold)
     runIMM() 
 '''
+
+maxLength = 8
+#runIMM()
+#runIterativeIMM()
+runIterativeMC(6)
 
 
 

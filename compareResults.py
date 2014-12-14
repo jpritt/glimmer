@@ -102,7 +102,7 @@ def compare(trueORFs, predORFs):
         if not found:
             fn += 1
 
-    print '  All predicted:'
+#    print '  All predicted:'
     print '    %% found: %0.2f (%d)' % (float(100*tp)/len(true), tp)
     print '    Genes missed: %d' % fn
     print '    Additional genes: %d' % fp
