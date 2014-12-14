@@ -34,14 +34,13 @@ def runHIMM(genome, trainGenes, testGenes, maxLength):
                 correct += 1
 
         n += 1
-        '''
-        if n % 10 == 0:
-            print 'Finished %d' % (n, len(testGenes))
-            #print '  Accuracy: %0.2f' % (float(correct)/float(len(gene[2])))
-            print '  Accuracy: %0.2f' % (float(totalCorrect)/float(totalBases))
-            print '  Time per gene: %0.2f s' % (totalTime / n)
-            print '  Average gene length: %0.1f' % (totalLen / n)
-        '''
+        
+        if True:#n % 10 == 0:
+            #print 'Finished %d' % (n, len(testGenes))
+            print '  Accuracy: %0.2f (%d, %0.2fs)' % (float(correct)/float(len(gene[2])), gene[1]-gene[0], endTime-startTime)
+            #print '  Accuracy: %0.2f' % (float(totalCorrect)/float(totalBases))
+            #print '  Time per gene: %0.2f s' % (totalTime / n)
+            #print '  Average gene length: %0.1f' % (totalLen / n)
         if n >= 100:
             break
 

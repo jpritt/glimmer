@@ -251,7 +251,7 @@ def buildIMM(counts, codingSeqs, noncodingSeqs):
 def buildMarkovChain(counts, codingSeqs, noncodingSeqs, length):
     # frame = 0 (forward) or 3 (reverse complement)
     for (seq,frame) in codingSeqs:
-        rf = frame
+        rf = (length % 3) + frame
         for i in xrange(length, len(seq)):
             kmer = seq[i-length:i+1]
             if kmer in counts[rf][length]:
@@ -467,6 +467,7 @@ def scoreMarkovChain(orf, length, counts):
     rfScores = []
     for rf in xrange(3):
         score = 0
+        rf = (rf+length) % 3
         for x in xrange(orf[0]+length, orf[1]):
             score += math.log(prob(rf, genome[x-length : x+1], counts))
             rf = (rf+1) % 3
@@ -475,6 +476,7 @@ def scoreMarkovChain(orf, length, counts):
     # Score the given region in reverse 3 reading frames
     for rf in xrange(3):
         score = 0
+        rf = (rf+length) % 3
         for x in xrange(orf[0], orf[1]):
             score += math.log(prob(rf+3, genome[x-length : x+1], counts))
             rf = (rf+1) % 3
@@ -483,7 +485,7 @@ def scoreMarkovChain(orf, length, counts):
     
     # Score in last reading frame
     score = 0
-    for x in xrange(orf[0], orf[1]):
+    for x in xrange(orf[0]+length, orf[1]):
         score += math.log(prob(6, genome[x-length : x+1], counts))
     rfScores.append(score)
 
@@ -691,11 +693,11 @@ def noChange(oldORFs, newORFs):
 genome = readFASTA(sys.argv[1])
 
 
-#for i in xrange(maxLength+1):
-#    runMC(i)
 for i in xrange(maxLength+1):
-    maxLength = i
-    runIMM()
+    runMC(i)
+#for i in xrange(maxLength+1):
+#    maxLength = i
+#    runIMM()
 
 '''
 for i in xrange(8):

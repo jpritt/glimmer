@@ -1,0 +1,6 @@
+Instructions to compare IMM and Fixed-length MM on an organism:
+
+> ./readCodingSeqs.py ./path/to/coding_seqs.fasta
+
+Uncomment lines 696-700 in build-imm.py
+> ./build-imm.py ./path/to/genome/sequence.fasta
