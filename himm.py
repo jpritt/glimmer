@@ -9,28 +9,20 @@ class HIMM(object):
         for those table entries.  States and emissions are represented
         with single characters.  Emission symbols comes from a finite.  '''
     
-    def __init__(self, counts, immProbs, maxLength):
+    def __init__(self, counts, immProbs, singleProbs, maxLength):
         ''' Initialize the HIMM given 
-            E - Emission probabilities
-            I - Initial probabilities
             counts - counts of each kmer
+            immProbs - empty, to be filled out with calculated IMM probs
+            singleProbs - For each state, probability of each single nucleotide occurring
+            maxLength - maximum kmer length used
         '''
         
         self.counts = counts
         self.immProbs = immProbs
+        self.singleProbs = singleProbs
         self.maxLength = maxLength
-    
-    def jointProbL(self, p, x):
-        ''' Return log2 of joint probability of path p and emission
-            string x.'''
-        p = map(self.qmap.get, p) # turn state characters into ids
-        x = map(self.smap.get, x) # turn emission characters into ids
-        tot = self.Ilog[p[0]] # start with initial probability
-        for i in xrange(1, len(p)):
-            tot += self.Alog[p[i-1], p[i]] # transition probability
-        for i in xrange(0, len(p)):
-            tot += self.Elog[p[i], x[i]] # emission probability
-        return tot
+
+        self.nts = ['A', 'C', 'G', 'T']
     
     def viterbiL(self, x):
         ''' Given sequence of emissions, return the most probable path
@@ -71,3 +63,66 @@ class HIMM(object):
             p.append(i)
         p = ''.join(map(lambda x: self.Q[x], p[::-1]))
         return omx, p # Return log probability and path
+
+    def imm(oldState, newState, seq):
+        if seq in self.immProbs[oldState][newState][len(seq)-1]:
+            return self.immProbs[oldState][newState][len(seq)-1]
+
+        prefix = seq[:-1]
+
+        if len(seq) == 1:
+            probs = [0]*4
+            for i in xrange(4):
+                self.immProbs[oldState][newState][0][nts[i]] = self.singleProbs[newState][seq]
+            return self.immProbs[oldState][newState][0][seq]
+
+        length = len(seq)-1
+        if prefix in self.counts[oldState][newState][length-1] and self.counts[oldState][newState][length-1][prefix] > countThreshold:
+            wgt = 1
+        else:
+            currCounts = [1]*4
+            currTotal = 4
+            for i in xrange(4):
+                tempSeq = prefix + nts[i]
+                if tempSeq in self.counts[oldState][newState][length]:
+                    currCounts[i] += self.counts[oldState][newState][length][tempSeq]
+                    currTotal += self.counts[oldState][newState][length][tempSeq]
+
+            nextProbs = [0]*4
+            for i in xrange(4):
+                nextProbs[i] = imm(oldState, newState, prefix[1:]+nts[i])
+            
+            d = scipy.stats.chi2_contingency(np.array([currCounts, nextProbs]))[1]
+
+            if d < 0.5:
+                wgt = 0
+            else:
+                if prefix in self.counts[oldState][newState][length-1]:
+                    wgt = d * self.counts[oldState][newState][length-1][prefix] / 400.0
+                else:
+                    wgt = 0
+
+        probs = [0]*4
+        for i in xrange(4):
+            probs[i] = wgt * prob(oldState, newState, prefix+nts[i]) + (1-wgt) * imm(oldState, newState, prefix[1:]+nts[i])
+        totalProb = sum(probs)
+
+        for i in xrange(4):
+            self.immProbs[oldState][newState][len(seq)-1][prefix+nts[i]] = float(probs[i]) / totalProb
+
+        return self.immProbs[oldState][newState][len(seq)-1][seq]
+
+    def prob(oldState, newState, seq):
+        length = len(seq)-1
+
+        # Count all possible next nucleotides, with +1 smoothing
+        totalNum = 0
+        for n in nts:
+            if seq[:-1]+n in self.counts[oldState][newState][length]:
+                totalNum += self.counts[oldState][newState][length][seq[:-1]+n]
+            else:
+                totalNum += 1
+        if not seq in self.counts[oldState][newState][length]:
+            return 1.0 / float(totalNum)
+        else:
+            return float(self.counts[oldState][newState][length][seq]) / float(totalNum)

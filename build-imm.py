@@ -707,9 +707,12 @@ for i in xrange(8):
 '''
 
 maxLength = 8
-#runIMM()
+runIMM()
+
+#runMC(6)
+
 #runIterativeIMM()
-runIterativeMC(6)
+#runIterativeMC(6)
 
 
 
