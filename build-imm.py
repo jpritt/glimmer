@@ -292,7 +292,8 @@ def glimmer(genome, counts, immScores, mcLength=None):
             if codon in start and startPos == None:
                 startPos = nt
             elif not startPos == None and codon in stop:
-                orfs[i] += [(startPos, nt+3)]
+                if nt+3-startPos >= orfMinLength:
+                    orfs[i] += [(startPos, nt+3)]
                 startPos = None
             elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
                 startPos = None
@@ -308,7 +309,8 @@ def glimmer(genome, counts, immScores, mcLength=None):
             if codon in revCompStart and startPos == None:
                 startPos = nt
             elif not startPos == None and codon in revCompStop:
-                orfs[i+3] += [(nt-3, startPos)]
+                if startPos-nt+3 >= orfMinLength:
+                    orfs[i+3] += [(nt-3, startPos)]
                 startPos = None
             elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
                 startPos = None
@@ -693,8 +695,8 @@ def noChange(oldORFs, newORFs):
 genome = readFASTA(sys.argv[1])
 
 
-for i in xrange(maxLength+1):
-    runMC(i)
+#for i in xrange(maxLength+1):
+#    runMC(i)
 #for i in xrange(maxLength+1):
 #    maxLength = i
 #    runIMM()
@@ -707,8 +709,8 @@ for i in xrange(8):
     runIMM() 
 '''
 
-#maxLength = 8
-#runIMM()
+maxLength = 8
+runIMM()
 #runMC(6)
 
 #runIterativeIMM()

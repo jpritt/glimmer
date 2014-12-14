@@ -26,7 +26,13 @@ class HIMM(object):
         self.maxLength = maxLength
 
         self.nts = ['A', 'C', 'G', 'T']
+        self.stateNTs = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't']
 
+        # For each state, possible next states with non-zero probability
+        self.nextStates = [[1,3], [2,3], [0,3], [1,3], [2,3], [0,3]]
+        #self.nextStates = [[1,3], [2,4], [0,5], [1,3], [2,4], [0,5]]
+
+        '''
         self.immProbs = []
         for i in xrange(len(counts)):
             self.immProbs.append([])
@@ -34,6 +40,14 @@ class HIMM(object):
                 self.immProbs[i].append([])
                 for k in xrange(self.maxLength+1):
                     self.immProbs[i][j].append(dict())
+        '''
+
+        # 6 tables: 0 -> (1,3), 1 -> (2,4), 2 -> (0,5), 3 -> (1,3), 4 -> (2,4), 5 -> (0,5)
+        self.immProbs = []
+        for i in xrange(6):
+            self.immProbs.append([])
+            for j in xrange(self.maxLength+1):
+                self.immProbs[i].append(dict())
     
     def viterbi(self, x):
         ''' Given sequence of emissions, return the most probable path
@@ -102,32 +116,30 @@ class HIMM(object):
         return path
 
     def imm(self, oldState, newState, seq):
-        if seq in self.immProbs[oldState][newState][len(seq)-1]:
-            return self.immProbs[oldState][newState][len(seq)-1][seq]
+        if newState > 2:
+            seq = seq[:-1] + seq[-1].lower()
+        if seq in self.immProbs[oldState][len(seq)-1]:
+            return self.immProbs[oldState][len(seq)-1][seq]
 
         prefix = seq[:-1]
 
         if len(seq) == 1:
             probs = [0]*4
             for i in xrange(4):
-                self.immProbs[oldState][newState][0][self.nts[i]] = self.singleProb(newState, self.nts[i])
-            return self.immProbs[oldState][newState][0][seq]
+                self.immProbs[oldState][0][self.nts[i]] = self.singleProb(newState, self.nts[i])
+            return self.immProbs[oldState][0][seq]
 
         length = len(seq)-1
-        if prefix in self.counts[oldState][newState][length-1] and self.counts[oldState][newState][length-1][prefix] > self.countThreshold:
+        if prefix in self.counts[oldState][length-1] and self.counts[oldState][length-1][prefix] > self.countThreshold:
             wgt = 1
         else:
-            currCounts = [1]*4
-            currTotal = 4
-            for i in xrange(4):
-                tempSeq = prefix + self.nts[i]
-                if tempSeq in self.counts[oldState][newState][length]:
-                    currCounts[i] += self.counts[oldState][newState][length][tempSeq]
-                    currTotal += self.counts[oldState][newState][length][tempSeq]
+            probs = self.getProbs(oldState, prefix)
 
-            nextProbs = [0]*4
-            for i in xrange(4):
-                nextProbs[i] = self.imm(oldState, newState, prefix[1:]+self.nts[i])
+            currProbs = []
+            nextProbs = []
+            for n in self.stateNTs:
+                currProbs.append(probs[n])
+                nextProbs.append(self.imm(oldState, newState, prefix[1:]+n))
             
             d = scipy.stats.chi2_contingency(np.array([currCounts, nextProbs]))[1]
 
@@ -139,9 +151,9 @@ class HIMM(object):
                 else:
                     wgt = 0
 
-        probs = [0]*4
-        for i in xrange(4):
-            probs[i] = wgt * self.prob(oldState, newState, prefix+self.nts[i]) + (1-wgt) * self.imm(oldState, newState, prefix[1:]+self.nts[i])
+        probs = self.getProbs(oldState, prefix)
+        for k in probs.keys():
+            probs[i] = wgt * probs[k] + (1-wgt) * self.imm(oldState, newState, prefix[1:]+self.nts[i])
         totalProb = sum(probs)
 
         for i in xrange(4):
@@ -149,19 +161,57 @@ class HIMM(object):
 
         return self.immProbs[oldState][newState][len(seq)-1][seq]
 
-    def prob(self, oldState, newState, seq):
+    def getProbs(self, oldState, prefix):
+        #if newState > 3:
+        #    newState = 3
+
+        #if not newState in self.nextStates[oldState]:
+        #    return None
+
         length = len(seq)-1
 
         # Count all possible next nucleotides, with +1 smoothing
-        totalNum = 4
-        for n in self.nts:
-            if seq[:-1]+n in self.counts[oldState][newState][length]:
-                totalNum += self.counts[oldState][newState][length][seq[:-1]+n]
+        counts = dict()
+        totalCount = 0
+        for i in self.nextStates[oldState]:
+            for n in self.nts:
+                if i < 3:
+                    stateN = n
+                else:
+                    stateN = n.lower()
+                
+                if seq[:-1]+n in self.counts[oldState][i][length]:
+                    counts[stateN] =  1 + self.counts[oldState][i][length][seq[:-1]+n]
+                else:
+                    counts[stateN] =  1
+                totalCount += counts[stateN]
+
+        for k in counts.keys():
+            counts[k] = float(counts[k]) / totalCount
+        return probs
+
+    '''
+    def prob(self, oldState, newState, seq):
+        if newState > 3:
+            newState = 3
+
+        if not newState in self.nextStates[oldState]:
+            return 0
+
+        length = len(seq)-1
+
+        # Count all possible next nucleotides, with +1 smoothing
+        totalNum = len(self.stateNTs)
+        for i in self.nextStates[oldState]:
+            for n in self.nts:
+                if seq[:-1]+n in self.counts[oldState][newState][length]:
+                    totalNum += self.counts[oldState][newState][length][seq[:-1]+n]
 
         if not seq in self.counts[oldState][newState][length]:
             return 1.0 / float(totalNum)
         else:
             return float(1+self.counts[oldState][newState][length][seq]) / float(totalNum)
+    '''
 
     def singleProb(self, state, nt):
         totalNum = 4
