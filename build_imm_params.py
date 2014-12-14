@@ -7,7 +7,6 @@ import numpy as np
 import math
 import compareResults
 import time
-import argparse
 
 debug = False
 
@@ -252,7 +251,7 @@ def buildIMM(counts, codingSeqs, noncodingSeqs):
 def buildMarkovChain(counts, codingSeqs, noncodingSeqs, length):
     # frame = 0 (forward) or 3 (reverse complement)
     for (seq,frame) in codingSeqs:
-        rf = frame
+        rf = (length % 3) + frame
         for i in xrange(length, len(seq)):
             kmer = seq[i-length:i+1]
             if kmer in counts[rf][length]:
@@ -293,7 +292,8 @@ def glimmer(genome, counts, immScores, mcLength=None):
             if codon in start and startPos == None:
                 startPos = nt
             elif not startPos == None and codon in stop:
-                orfs[i] += [(startPos, nt+3)]
+                if nt+3-startPos >= orfMinLength:
+                    orfs[i] += [(startPos, nt+3)]
                 startPos = None
             elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
                 startPos = None
@@ -309,7 +309,8 @@ def glimmer(genome, counts, immScores, mcLength=None):
             if codon in revCompStart and startPos == None:
                 startPos = nt
             elif not startPos == None and codon in revCompStop:
-                orfs[i+3] += [(nt-3, startPos)]
+                if startPos-nt+3 >= orfMinLength:
+                    orfs[i+3] += [(nt-3, startPos)]
                 startPos = None
             elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
                 startPos = None
@@ -468,6 +469,7 @@ def scoreMarkovChain(orf, length, counts):
     rfScores = []
     for rf in xrange(3):
         score = 0
+        rf = (rf+length) % 3
         for x in xrange(orf[0]+length, orf[1]):
             score += math.log(prob(rf, genome[x-length : x+1], counts))
             rf = (rf+1) % 3
@@ -476,6 +478,7 @@ def scoreMarkovChain(orf, length, counts):
     # Score the given region in reverse 3 reading frames
     for rf in xrange(3):
         score = 0
+        rf = (rf+length) % 3
         for x in xrange(orf[0], orf[1]):
             score += math.log(prob(rf+3, genome[x-length : x+1], counts))
             rf = (rf+1) % 3
@@ -484,7 +487,7 @@ def scoreMarkovChain(orf, length, counts):
     
     # Score in last reading frame
     score = 0
-    for x in xrange(orf[0], orf[1]):
+    for x in xrange(orf[0]+length, orf[1]):
         score += math.log(prob(6, genome[x-length : x+1], counts))
     rfScores.append(score)
 
@@ -694,9 +697,9 @@ def noChange(oldORFs, newORFs):
 
 #for i in xrange(maxLength+1):
 #    runMC(i)
-# for i in xrange(maxLength+1):
-#     maxLength = i
-#     runIMM()
+#for i in xrange(maxLength+1):
+#    maxLength = i
+#    runIMM()
 
 '''
 for i in xrange(8):
@@ -706,12 +709,13 @@ for i in xrange(8):
     runIMM() 
 '''
 
-#maxLength = 8
-#runIMM()
+# maxLength = 8
+# runIMM()
 #runMC(6)
 
 #runIterativeIMM()
 #runIterativeMC(6)
+
 
 if __name__ == "__main__":
 
@@ -728,5 +732,6 @@ if __name__ == "__main__":
         runIMM()
     elif (args.command == 'MC'):
         runMC(args.max_kmer_length)
+
 
     
