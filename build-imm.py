@@ -595,7 +595,7 @@ def runMC(length):
     coding, noncoding = findLongORFs(genome)
     counts = buildMarkovChain(counts, coding, noncoding, length)
     buildTime = time.time()
-    approved, suspect = glimmer(genome, length, counts, immScores)
+    approved, suspect = glimmer(genome, counts, immScores, length)
     endTime = time.time()
     print '  %0.2fs total (%0.2fs to build, %0.2fs to run)' % (endTime-startTime, buildTime-startTime, endTime-buildTime)
     writeORFs(approved, suspect)
@@ -707,9 +707,9 @@ for i in xrange(8):
 '''
 
 maxLength = 8
-runIMM()
+#runIMM()
 
-#runMC(6)
+runMC(6)
 
 #runIterativeIMM()
 #runIterativeMC(6)

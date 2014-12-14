@@ -18,13 +18,20 @@ class HIMM(object):
         '''
         
         self.counts = counts
-        self.immProbs = immProbs
         self.singleProbs = singleProbs
         self.maxLength = maxLength
 
         self.nts = ['A', 'C', 'G', 'T']
+
+        self.immProbs = []
+        for i in xrange(len(counts)):
+            self.immProbs.append([])
+            for j in xrange(len(counts[0])):
+                self.immProbs[i].append([])
+                for k in xrange(self.maxLength+1):
+                    self.immProbs[i][j].append(dict())
     
-    def viterbiL(self, x):
+    def viterbi(self, x):
         ''' Given sequence of emissions, return the most probable path
             along with log2 of its probability.'''
 
@@ -36,35 +43,61 @@ class HIMM(object):
 
         # Fill in first column
         # Every gene starts in exon_rf1
-        mat[0, 0] = 1
+        mat[0, 0] = 0
         for i in xrange(1, nrow):
-            mat[i, 0] = self.Elog[i, x[0]] + self.Ilog[i]
+            mat[i, 0] = -100000
 
         # Fill in rest of log prob and Tb tables
         for j in xrange(1, ncol):
-            for i in xrange(0, nrow):
-                ep = self.Elog[i, x[j]]
-                mx, mxi = mat[0, j-1] + self.Alog[0, i] + ep, 0
-                for i2 in xrange(1, nrow):
-                    pr = mat[i2, j-1] + self.Alog[i2, i] + ep
-                    if pr > mx:
-                        mx, mxi = pr, i2
-                mat[i, j], matTb[i, j] = mx, mxi
+            length = min(j, self.maxLength)
+            for newState in xrange(0, nrow):
+                # Exonic states
+                if newState < 3:
+                    # possible previous states: (newState-1)%3, (newState-1)%3 + 3
+                    probA = mat[i-1, (newState-1)%3] + self.imm((newState-1)%3, newState, x[j-length:j+1])
+                    probB = mat[i-1, (newState-1)%3+3] + self.imm(3, newState, x[j-length:j+1])
+                    if probA > probB:
+                        mat[i, j] = math.log2(probA)
+                        matTb[i, j] = (newState-1)%3
+                    else:
+                        mat[i, j] = math.log2(probB)
+                        matTb[i, j] = (newState-1)%3 + 3
+
+                # Intronic states
+                else:
+                    # possible previous states: newState-3, newState
+                    probA = mat[i-1, newState-3] + self.imm(newState-3, 3, x[j-length:j+1])
+                    probB = mat[i-1, newState] + self.imm(3, 3, x[j-length:j+1])
+                    if probA > probB:
+                        mat[i, j] = math.log2(probA)
+                        matTb[i, j] = newState-3
+                    else:
+                        mat[i, j] = math.log2(probB)
+                        matTb[i, j] = newState
 
         # Find final state with maximal log probability
-        omx, omxi = mat[0, ncol-1], 0
+        maxProb = mat[0, ncol-1]
+        maxState = 0
         for i in xrange(1, nrow):
-            if mat[i, ncol-1] > omx:
-                omx, omxi = mat[i, ncol-1], i
+            if mat[i, ncol-1] > maxProb:
+                maxProb = mat[i, ncol-1]
+                maxState = i
+
         # Backtrace
-        i, p = omxi, [omxi]
+        if maxState < 3:
+            path = '1'
+        else:
+            path = '0'
         for j in xrange(ncol-1, 0, -1):
             i = matTb[i, j]
-            p.append(i)
-        p = ''.join(map(lambda x: self.Q[x], p[::-1]))
-        return omx, p # Return log probability and path
+            if i < 3:
+                path = '1' + path
+            else:
+                path = '0' + path
+        # Return path
+        return path
 
-    def imm(oldState, newState, seq):
+    def imm(self, oldState, newState, seq):
         if seq in self.immProbs[oldState][newState][len(seq)-1]:
             return self.immProbs[oldState][newState][len(seq)-1]
 
@@ -90,7 +123,7 @@ class HIMM(object):
 
             nextProbs = [0]*4
             for i in xrange(4):
-                nextProbs[i] = imm(oldState, newState, prefix[1:]+nts[i])
+                nextProbs[i] = self.imm(oldState, newState, prefix[1:]+nts[i])
             
             d = scipy.stats.chi2_contingency(np.array([currCounts, nextProbs]))[1]
 
@@ -104,7 +137,7 @@ class HIMM(object):
 
         probs = [0]*4
         for i in xrange(4):
-            probs[i] = wgt * prob(oldState, newState, prefix+nts[i]) + (1-wgt) * imm(oldState, newState, prefix[1:]+nts[i])
+            probs[i] = wgt * self.prob(oldState, newState, prefix+nts[i]) + (1-wgt) * self.imm(oldState, newState, prefix[1:]+nts[i])
         totalProb = sum(probs)
 
         for i in xrange(4):
@@ -112,7 +145,7 @@ class HIMM(object):
 
         return self.immProbs[oldState][newState][len(seq)-1][seq]
 
-    def prob(oldState, newState, seq):
+    def prob(self, oldState, newState, seq):
         length = len(seq)-1
 
         # Count all possible next nucleotides, with +1 smoothing
