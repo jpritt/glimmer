@@ -10,7 +10,9 @@ class HIMM(object):
         for those table entries.  States and emissions are represented
         with single characters.  Emission symbols comes from a finite.  '''
     
-    def __init__(self, counts, singleProbs, maxLength):
+    countThreshold = 400.0
+
+    def __init__(self, counts, singleProbs, probSwitch, maxLength):
         ''' Initialize the HIMM given 
             counts - counts of each kmer
             immProbs - empty, to be filled out with calculated IMM probs
@@ -20,6 +22,7 @@ class HIMM(object):
         
         self.counts = counts
         self.singleProbs = singleProbs
+        self.probSwitch = probSwitch
         self.maxLength = maxLength
 
         self.nts = ['A', 'C', 'G', 'T']
@@ -55,25 +58,25 @@ class HIMM(object):
                 # Exonic states
                 if newState < 3:
                     # possible previous states: (newState-1)%3, (newState-1)%3 + 3
-                    probA = mat[i-1, (newState-1)%3] + self.imm((newState-1)%3, newState, x[j-length:j+1])
-                    probB = mat[i-1, (newState-1)%3+3] + self.imm(3, newState, x[j-length:j+1])
+                    probA = mat[i-1, (newState-1)%3] + math.log(self.imm((newState-1)%3, newState, x[j-length:j+1]), 2) + self.probSwitch[0][0]
+                    probB = mat[i-1, (newState-1)%3+3] + math.log(self.imm(3, newState, x[j-length:j+1]), 2) + self.probSwitch[1][0]
                     if probA > probB:
-                        mat[i, j] = math.log2(probA)
+                        mat[i, j] = probA
                         matTb[i, j] = (newState-1)%3
                     else:
-                        mat[i, j] = math.log2(probB)
+                        mat[i, j] = probB
                         matTb[i, j] = (newState-1)%3 + 3
 
                 # Intronic states
                 else:
                     # possible previous states: newState-3, newState
-                    probA = mat[i-1, newState-3] + self.imm(newState-3, 3, x[j-length:j+1])
-                    probB = mat[i-1, newState] + self.imm(3, 3, x[j-length:j+1])
+                    probA = mat[i-1, newState-3] + math.log(self.imm(newState-3, 3, x[j-length:j+1]), 2) + self.probSwitch[0][1]
+                    probB = mat[i-1, newState] + math.log(self.imm(3, 3, x[j-length:j+1]), 2) + self.probSwitch[0][0]
                     if probA > probB:
-                        mat[i, j] = math.log2(probA)
+                        mat[i, j] = probA
                         matTb[i, j] = newState-3
                     else:
-                        mat[i, j] = math.log2(probB)
+                        mat[i, j] = probB
                         matTb[i, j] = newState
 
         # Find final state with maximal log probability
@@ -111,7 +114,7 @@ class HIMM(object):
             return self.immProbs[oldState][newState][0][seq]
 
         length = len(seq)-1
-        if prefix in self.counts[oldState][newState][length-1] and self.counts[oldState][newState][length-1][prefix] > countThreshold:
+        if prefix in self.counts[oldState][newState][length-1] and self.counts[oldState][newState][length-1][prefix] > self.countThreshold:
             wgt = 1
         else:
             currCounts = [1]*4
@@ -132,7 +135,7 @@ class HIMM(object):
                 wgt = 0
             else:
                 if prefix in self.counts[oldState][newState][length-1]:
-                    wgt = d * self.counts[oldState][newState][length-1][prefix] / 400.0
+                    wgt = d * self.counts[oldState][newState][length-1][prefix] / self.countThreshold
                 else:
                     wgt = 0
 
@@ -163,6 +166,6 @@ class HIMM(object):
     def singleProb(self, state, nt):
         totalNum = 4
         for n in self.nts:
-            totalNum += self.singleProbs[newState][n]
+            totalNum += self.singleProbs[state][n]
 
-        return float(1+self.singleProbs[newState][nt]) / float(totalNum)
+        return float(1+self.singleProbs[state][nt]) / float(totalNum)

@@ -691,11 +691,11 @@ def noChange(oldORFs, newORFs):
 genome = readFASTA(sys.argv[1])
 
 
-#for i in xrange(6,maxLength+1):
+#for i in xrange(maxLength+1):
 #    runMC(i)
-#for i in xrange(1,maxLength+1):
-#    maxLength = i
-#    runIMM()
+for i in xrange(maxLength+1):
+    maxLength = i
+    runIMM()
 
 '''
 for i in xrange(8):
@@ -705,9 +705,8 @@ for i in xrange(8):
     runIMM() 
 '''
 
-maxLength = 8
-runIMM()
-
+#maxLength = 8
+#runIMM()
 #runMC(6)
 
 #runIterativeIMM()
