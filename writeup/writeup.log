@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 11:43
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 20:24
 entering extended mode
 **writeup.tex
 
@@ -429,20 +429,33 @@ s\tikzlibrarytopaths.code.tex"
 File: tikzlibrarytopaths.code.tex 2008/06/17 v3.0.0 (rcs-revision 1.2)
 )))
 ("C:\Users\YongFang\Desktop\Academics\Machine learning\project\glimmer\writeup\
-writeup.aux")
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 25.
+writeup.aux"
+
+LaTeX Warning: Label `font-table' multiply defined.
+
+
+LaTeX Warning: Label `font-table' multiply defined.
+
+
+LaTeX Warning: Label `font-table' multiply defined.
+
+
+LaTeX Warning: Label `font-table' multiply defined.
+
+)
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 26.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1ptm.fd"
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -462,47 +475,47 @@ ABD: EveryShipout initializing macros
 \everyMPtoPDFconversion=\toks33
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 26.
-LaTeX Font Info:    Try loading font information for U+lasy on input line 26.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 27.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 27.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ulasy.fd"
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 26.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 26.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 27.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 27.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 33.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 34.
 
-Underfull \hbox (badness 2582) in paragraph at lines 33--34
+Underfull \hbox (badness 2582) in paragraph at lines 34--35
  \OT1/ptm/m/n/10.95 In the field of com-pu-ta-tional bi-ol-ogy, gene
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 33--34
+Underfull \hbox (badness 10000) in paragraph at lines 34--35
 
  []
 
 
-Underfull \hbox (badness 1888) in paragraph at lines 35--36
+Underfull \hbox (badness 1888) in paragraph at lines 36--37
 \OT1/ptm/m/n/10.95 IMMs are more pow-er-ful than sim-ple Markov
  []
 
 
-Underfull \hbox (badness 1199) in paragraph at lines 35--36
+Underfull \hbox (badness 1199) in paragraph at lines 36--37
 \OT1/ptm/m/n/10.95 base in the se-quence. Markov chain run into
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 35--36
+Underfull \hbox (badness 10000) in paragraph at lines 36--37
 
  []
 
 
-Underfull \hbox (badness 1158) in paragraph at lines 42--44
+Underfull \hbox (badness 1158) in paragraph at lines 43--45
 \OT1/ptm/m/n/10.95 Con-sec-u-tive read-ing frames share the DNA se-
  []
 
@@ -512,68 +525,68 @@ Underfull \hbox (badness 1158) in paragraph at lines 42--44
 
 
 ]
-Underfull \hbox (badness 1721) in paragraph at lines 56--57
+Underfull \hbox (badness 1721) in paragraph at lines 57--58
 \OT1/ptm/m/n/10.95 To bet-ter con-vey how the in-ter-po-lated Markov
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 56--57
+Underfull \hbox (badness 10000) in paragraph at lines 57--58
 
  []
 
 
-Underfull \hbox (badness 1253) in paragraph at lines 77--78
+Underfull \hbox (badness 1253) in paragraph at lines 78--79
 \OT1/ptm/m/n/10.95 de-pend on ad-di-tional pre-ced-ing vari-ables. For
  []
 
 
-Underfull \hbox (badness 1735) in paragraph at lines 77--78
+Underfull \hbox (badness 1735) in paragraph at lines 78--79
 \OT1/ptm/m/n/10.95 num-ber of pre-ced-ing vari-able prob-a-bil-i-ties, the
  []
 
 
-Underfull \hbox (badness 1436) in paragraph at lines 77--78
+Underfull \hbox (badness 1436) in paragraph at lines 78--79
 \OT1/ptm/m/n/10.95 model will hold $\OT1/cmr/m/n/10.95 4[]$ \OT1/ptm/m/n/10.95 
 prob-a-bil-i-ties for nu-cleotide
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 77--78
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 79--80
+Underfull \hbox (badness 10000) in paragraph at lines 80--81
 
  []
 
 
-Underfull \hbox (badness 2261) in paragraph at lines 81--82
+Underfull \hbox (badness 2261) in paragraph at lines 82--83
 []\OT1/ptm/m/n/10.95 As men-tioned, a higher-order Markov chain
  []
 
 [2]
-Underfull \hbox (badness 1057) in paragraph at lines 101--103
+Underfull \hbox (badness 1057) in paragraph at lines 102--104
 \OT1/ptm/m/n/10.95 The weight at-tached to $\OML/cmm/m/it/10.95 P[]\OT1/cmr/m/n
 /10.95 (\OML/cmm/m/it/10.95 S[]\OT1/cmr/m/n/10.95 )$ \OT1/ptm/m/n/10.95 can be 
 seen as
  []
 
 
-Underfull \hbox (badness 6978) in paragraph at lines 101--103
+Underfull \hbox (badness 6978) in paragraph at lines 102--104
 \OT1/ptm/m/n/10.95 and $\OML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/
 10.95 S[]; t\OT1/cmr/m/n/10.95 )$ \OT1/ptm/m/n/10.95 with the pre-vi-ously cal-
 cu-lated
  []
 
 
-Overfull \hbox (32.19011pt too wide) detected at line 109
+Overfull \hbox (32.19011pt too wide) detected at line 110
 \OML/cmm/m/it/10.95 []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 S[]\OT1/cmr/m/n/
 10.95 ) = []
  []
 
 
-Overfull \hbox (58.07542pt too wide) detected at line 114
+Overfull \hbox (58.07542pt too wide) detected at line 115
 \OML/cmm/m/it/10.95 IMM[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 S[]\OT1/cmr/m/
 n/10.95 ) = \OML/cmm/m/it/10.95 []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 S[]\
 OT1/cmr/m/n/10.95 ) \OMS/cmsy/m/n/10.95  \OML/cmm/m/it/10.95 P[]\OT1/cmr/m/n/1
@@ -589,52 +602,112 @@ Missing character: There is no ™ in font ptmr7t!
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
-[3]
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no ™ in font ptmr7t!
+[3] <plots/accuracy_vs_model_complexity.png, id=27, 262.581pt x 234.8775pt>
+File: plots/accuracy_vs_model_complexity.png Graphic file (type png)
 
-Underfull \hbox (badness 5133) in paragraph at lines 158--159
-\OT1/ptm/m/n/10.95 While not men-tioned in the orig-i-nal GLIM-
+<use plots/accuracy_vs_model_complexity.png>
+Package pdftex.def Info: plots/accuracy_vs_model_complexity.png used on input l
+ine 131.
+(pdftex.def)             Requested size: 210.06506pt x 187.90225pt.
+
+<plots/runtime_vs_model_complexity.png, id=29, 292.09125pt x 168.63pt>
+File: plots/runtime_vs_model_complexity.png Graphic file (type png)
+
+<use plots/runtime_vs_model_complexity.png>
+Package pdftex.def Info: plots/runtime_vs_model_complexity.png used on input li
+ne 140.
+(pdftex.def)             Requested size: 233.6733pt x 134.90417pt.
+
+Overfull \hbox (6.02269pt too wide) in paragraph at lines 140--141
+ [] 
+ []
+
+
+<plots/false_positives_vs_model_complexity.png, id=30, 289.08pt x 170.43675pt>
+File: plots/false_positives_vs_model_complexity.png Graphic file (type png)
+
+<use plots/false_positives_vs_model_complexity.png>
+Package pdftex.def Info: plots/false_positives_vs_model_complexity.png used on 
+input line 149.
+(pdftex.def)             Requested size: 231.2643pt x 136.34956pt.
+
+Overfull \hbox (3.6137pt too wide) in paragraph at lines 149--150
+ [] 
  []
 
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
+
+Underfull \hbox (badness 5133) in paragraph at lines 174--175
+\OT1/ptm/m/n/10.95 While not men-tioned in the orig-i-nal GLIM-
+ []
+
+
+<plots/accuracy_vs_model_complexity_drosophila.png, id=31, 299.9205pt x 221.628
+pt>
+File: plots/accuracy_vs_model_complexity_drosophila.png Graphic file (type png)
+
+ <use plots/accuracy_vs_model_complexity_drosophila.png>
+Package pdftex.def Info: plots/accuracy_vs_model_complexity_drosophila.png used
+ on input line 178.
+(pdftex.def)             Requested size: 239.9367pt x 177.30263pt.
+
+Overfull \hbox (12.2861pt too wide) in paragraph at lines 178--179
+ [] 
+ []
+
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no ™ in font ptmr7t!
+
+Underfull \vbox (badness 1052) has occurred while \output is active []
+
+ [4 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
+up/plots/accuracy_vs_model_complexity.png> <C:/Users/YongFang/Desktop/Academics
+/Machine learning/project/glimmer/writeup/plots/runtime_vs_model_complexity.png
+> <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/writeup
+/plots/false_positives_vs_model_complexity.png>]
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
-[4]
+ [5 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
+up/plots/accuracy_vs_model_complexity_drosophila.png>]
 ("C:\Users\YongFang\Desktop\Academics\Machine learning\project\glimmer\writeup\
-writeup.aux") ) 
+writeup.aux")
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
 Here is how much of TeX's memory you used:
- 11686 strings out of 493921
- 234304 string characters out of 3144866
- 265828 words of memory out of 3000000
- 14763 multiletter control sequences out of 15000+200000
- 23502 words of font info for 57 fonts, out of 3000000 for 9000
+ 11720 strings out of 493921
+ 235339 string characters out of 3144866
+ 265867 words of memory out of 3000000
+ 14787 multiletter control sequences out of 15000+200000
+ 25201 words of font info for 65 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  55i,10n,54p,1306b,731s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.e
-nc}<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb
-><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C
-:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/
-Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Pr
-ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Progr
-am Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program 
-Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program File
-s (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files 
-(x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x8
-6)/MiKTeX 2.9/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program Files (x86)/MiKTeX
- 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
-type1/urw/times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/t
-imes/utmri8a.pfb>
-Output written on writeup.pdf (4 pages, 156466 bytes).
+{C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Progra
+m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Program 
+Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Program Fil
+es (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files
+ (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files (
+x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files (x86
+)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files (x86)/M
+iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/MiKTeX 2
+.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9
+/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fo
+nts/type1/urw/courier/ucrr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
+/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/
+utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb
+>
+Output written on writeup.pdf (5 pages, 201617 bytes).
 PDF statistics:
- 71 PDF objects out of 1000 (max. 8388607)
+ 84 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 33 words of extra memory for PDF output out of 10000 (max. 10000000)
 
