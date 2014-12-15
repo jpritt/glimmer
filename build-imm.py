@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+'''
+This file identifies 
+'''
+
 import sys
 import math
 import scipy.stats
@@ -7,6 +11,7 @@ import numpy as np
 import math
 import compareResults
 import time
+import argparse
 
 debug = False
 
@@ -24,10 +29,14 @@ numOrfs = 7
 
 orfMinLength = 90
 
+trueFile = ''
+
 # If a kmer has at least this many occurences, don't use a smaller kmer
 countThreshold = 400
 
 def init():
+    ''' Initialize counts and immScores tables to store training counts and calculated IMM probabilities.
+    '''
     counts = []
     for o in xrange(numOrfs):
         countsCurr = []
@@ -45,6 +54,8 @@ def init():
     return counts, immScores
 
 def readFASTA(filename):
+    ''' Read a genome in FASTA format and return it as a string.
+    '''
     genome = ''
     with open(filename, 'r') as f:
         for line in f:
@@ -53,19 +64,25 @@ def readFASTA(filename):
     return genome
 
 def findLongORFs(genome):
+    ''' Find long potential ORFs in the genome 
+        (regions that start with a start codon and end with a stop codon in the same reading frame)
+        Any of these potential ORFs that do not overlap are very likely to be true ORFs
+    '''
+
     minLen = 500
-
     counts = [0,0]
-
     longORFs = []
     startPos = None
+
+    # Find forward ORFs
     for i in xrange(3):
         for nt in xrange(i, len(genome), 3):
             codon = genome[nt:nt+3]
             if len(codon) < 3:
                 continue
 
-            if startPos == None:# and codon in start:
+            # Each ORF is defined by the first start codon and first stop codon that appear in the same reading frame
+            if startPos == None and codon in start:
                 startPos = nt
             elif not startPos == None and codon in stop:
                 if nt+3-startPos >= minLen:
@@ -75,6 +92,7 @@ def findLongORFs(genome):
             elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
                 startPos = None
 
+    # Find reverse complemented ORFs
     for i in xrange(3):
         startPos = None
         for pos in xrange(i, len(genome), 3):
@@ -83,16 +101,17 @@ def findLongORFs(genome):
             if len(codon) < 3:
                 continue
 
-            if startPos == None:# and codon in revCompStart:
+            # Each ORF is defined by the first start codon and first stop codon that appear in the same reading frame
+            if startPos == None and codon in revCompStart:
                 startPos = nt
             elif not startPos == None and codon in revCompStop:
                 if startPos-nt+3 >= minLen:
                     longORFs += [(nt-3, startPos, 3)]
-                    #orfs += [(genome[nt-3 : startPos], 3)]
                 startPos = None
             elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
                 startPos = None
 
+    # Remove any overlapping ORFs
     longORFs.sort()
     orfs = []
     if longORFs[0][1] <= longORFs[1][0]:
@@ -116,6 +135,7 @@ def findLongORFs(genome):
         if len(codon) < 3:
             continue
 
+        # Noncoding segments must start after a stop codon and end before a start codon
         if startPos == None and codon in stop:
             startPos = nt
             numEnds = 0
@@ -135,96 +155,35 @@ def findLongORFs(genome):
     return orfs, noncoding
 
 def updateORFs(orfs):
+    ''' Update the lists of coding and noncoding regions based on the list of orfs passed in
+    '''
     minLen = 500
     orfs = sorted(orfs)
     noncoding = []
+
+    # noncoding regions must have some minimum length and lie between 2 orfs
     for i in xrange(len(orfs)-1):
         if orfs[i+1][0] - orfs[i][1] >= minLen:
             noncoding += [genome[orfs[i][1]:orfs[i+1][0]]]
 
+    # all orfs passed in are coding sequences
     coding = []
     for c in orfs:
         coding += [(genome[c[0]:c[1]], c[2])]
 
     return coding, noncoding
 
-'''
-class orfSet:
-    def __init__(self, starts, ends, rf):
-        self.starts = starts
-        self.ends = ends
-        self.rf = rf
-
-    def findBestORF(self):
-        
-        s = self.starts[0]
-        e = self.ends[-1]
-        rfScores = score((s,e))
-        length = e - s
-
-        if self.rf < 3 and max(rfScores) == rfScores[0]:
-            normScore = rfScores[0]/length 
-            if normScore > scoreThreshold:
-                return (s, e, self.rf, normScore)
-        elif self.rf >= 3 and max(rfScores) == rfScores[3]:
-            normScore = rfScores[3]/length
-            if normScore > scoreThreshold:
-                return (s, e, self.rf, normScore)
-        return None
-        
-
-        best = None
-        bestScore = scoreThreshold
-
-        for s in self.starts:
-            for e in self.ends:
-                rfScores = score((s,e))
-                length = e - s
-
-                if self.rf < 3 and max(rfScores) == rfScores[0]:
-                    normScore = rfScores[0] / length
-                    if normScore > bestScore:
-                        best = (s,e)
-                        bestScore = normScore
-                elif self.rf >= 3 and max(rfScores) == rfScores[3]:
-                    normScore = rfScores[3] / length
-                    if normScore > bestScore:
-                        best = (s,e)
-                        bestScore = normScore
-        
-        #if (len(self.starts) > 1 or len(self.ends) > 1) and not best == None:
-        #    print 'Scoring: ' + str(self.starts) + ' & ' + str(self.ends)
-        #    print best
-        #    print bestScore
-        #    print ''
-
-        if best == None:
-            return None
-        else:
-            return (best[0], best[1], self.rf, bestScore)
-'''
-
-
-def reverseComplement(seq):
-    rev = ''
-    for c in seq:
-        if c == 'G':
-            rev = 'C' + rev
-        elif c == 'C':
-            rev = 'G' + rev
-        elif c == 'A':
-            rev = 'T' + rev
-        elif c == 'T':
-            rev = 'A' + rev
-        else:
-            rev = 'N' + rev
-            #print 'Unrecognized nucleotide: ' + c
-            #exit()
-    return rev
-
 def buildIMM(counts, codingSeqs, noncodingSeqs):
-    # frame = 0 (forward) or 3 (reverse complement)
+    ''' Trains a fixed-length Markov model
+
+        counts: Empty list to be filled with kmer counts
+        codingSeqs: ORFs for training
+        noncodingSeqs: Regions that are definitely not ORFs, for training reading frame 6
+    '''
+
+    # Train reading frames 0-5 on  ORFs
     for (seq,frame) in codingSeqs:
+        # frame = 0 (forward) or 3 (reverse complement)
         rf = frame
         for i in xrange(len(seq)):
             for l in xrange(min(maxLength+1, i+1)):
@@ -235,6 +194,7 @@ def buildIMM(counts, codingSeqs, noncodingSeqs):
                     counts[rf][l][kmer] = 1
             rf = (rf+1) % 3 + frame
 
+    # Train reading frame 6 on non-ORFs
     rf = 6
     for seq in noncodingSeqs:
         for i in xrange(len(seq)):
@@ -249,8 +209,17 @@ def buildIMM(counts, codingSeqs, noncodingSeqs):
 
 
 def buildMarkovChain(counts, codingSeqs, noncodingSeqs, length):
-    # frame = 0 (forward) or 3 (reverse complement)
+    ''' Trains a fixed-length Markov model
+
+        counts: Empty list to be filled with kmer counts
+        codingSeqs: ORFs for training
+        noncodingSeqs: Regions that are definitely not ORFs, for training reading frame 6
+        length: kmer context length
+    '''
+
+    # Train reading frames 0-5 on ORFs
     for (seq,frame) in codingSeqs:
+        # frame = 0 (forward) or 3 (reverse complement)
         rf = (length % 3) + frame
         for i in xrange(length, len(seq)):
             kmer = seq[i-length:i+1]
@@ -260,6 +229,7 @@ def buildMarkovChain(counts, codingSeqs, noncodingSeqs, length):
                 counts[rf][length][kmer] = 1
             rf = (rf+1) % 3 + frame
 
+    # Train reading frame 6 on non-ORFs
     rf = 6
     for seq in noncodingSeqs:
         for i in xrange(length, len(seq)):
@@ -274,14 +244,20 @@ def buildMarkovChain(counts, codingSeqs, noncodingSeqs, length):
 
 def glimmer(genome, counts, immScores, mcLength=None):
     '''
-        mcLength=None for IMM, mcLength=x for Markov Chain
+        Use the IMM or fixed-length Markov model to find all ORFs in the given genome
+
+        genome: genome for which to find ORFs
+        counts: list of kmer counts computed from training data
+        immScore: list of immScores for kmers (filled in lazily to save time)
+        mcLength: None for IMM, set to context length for fixed-length Markov Chain
     '''
 
-    # Find orfs for each reading frame
+    ''' Find potential ORFs in each '''
     orfs = []
     for i in xrange(6):
         orfs.append([])
 
+    # Find forward ORFs
     for i in xrange(3):
         startPos = None
         for nt in xrange(i, len(genome), 3):
@@ -289,6 +265,7 @@ def glimmer(genome, counts, immScores, mcLength=None):
             if len(codon) < 3:
                 continue
                 
+            # Each ORF is defined by the first start codon and first stop codon that appear in the same reading frame
             if codon in start and startPos == None:
                 startPos = nt
             elif not startPos == None and codon in stop:
@@ -296,8 +273,10 @@ def glimmer(genome, counts, immScores, mcLength=None):
                     orfs[i] += [(startPos, nt+3)]
                 startPos = None
             elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
+                # Some nucleotides are unknown and appear as different letters; ignore them
                 startPos = None
 
+    # Find reverse complemented ORFs
     for i in xrange(3):
         startPos = None
         for pos in xrange(i, len(genome), 3):
@@ -306,6 +285,7 @@ def glimmer(genome, counts, immScores, mcLength=None):
             if len(codon) < 3:
                 continue
 
+            # Each ORF is defined by the first start codon and first stop codon that appear in the same reading frame
             if codon in revCompStart and startPos == None:
                 startPos = nt
             elif not startPos == None and codon in revCompStop:
@@ -313,44 +293,10 @@ def glimmer(genome, counts, immScores, mcLength=None):
                     orfs[i+3] += [(nt-3, startPos)]
                 startPos = None
             elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
+                # Some nucleotides are unknown and appear as different letters; ignore them
                 startPos = None
 
-    '''
-    for i in xrange(3):
-        starts = []
-        for nt in xrange(i, len(genome), 3):
-            codon = genome[nt:nt+3]
-            if len(codon) < 3:
-                continue
-                
-            if codon in start:
-                starts.append(nt)
-            elif len(starts) > 0 and codon in stop:
-                #orfs[i] += [(starts[0], nt+3)]
-                orfs[i].append(orfSet(starts, [nt+3], i))
-                starts = []
-            elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
-                starts = []
-
-    for i in xrange(3):
-        starts = []
-        for pos in xrange(i, len(genome), 3):
-            nt = len(genome)-pos
-            codon = genome[nt-3:nt]
-            if len(codon) < 3:
-                continue
-
-            if codon in revCompStart:
-                starts.append(nt)
-            elif len(starts) > 0 and codon in revCompStop:
-                #orfs[i+3] += [(nt-3, starts[0])]
-                orfs[i+3].append(orfSet([nt-3], starts, i+3))
-                starts = []
-            elif (codon[0] not in nts) or (codon[1] not in nts) or (codon[2] not in nts):
-                starts = []
-    '''
-
-    # filter out bad-scoring orfs
+    ''' filter out bad-scoring orfs '''
     goodORFs = []
 
     totals = [0]*6
@@ -361,14 +307,15 @@ def glimmer(genome, counts, immScores, mcLength=None):
             print 'Processing rf %d (%d)' % (i, len(orfs[i]))
         
         for orf in orfs[i]:
+            # Score ORF in all reading frames
             if mcLength == None:
-                rfScores = scoreHMM(orf, counts, immScores)
+                rfScores = scoreIMM(orf, counts, immScores)
             else:
                 rfScores = scoreMarkovChain(orf, mcLength, counts)
 
-            # Find largest and second largest scores
+            # Only keep ORF if highest score is in the correct reading frame,
+            #  and is greater than some threshold.
             maxScore = max(rfScores)
-
             length = orf[1]-orf[0]
             if i < 3 and maxScore == rfScores[0] and rfScores[0]/length > scoreThreshold:
                 goodORFs.append((orf[0], orf[1], i, rfScores[0]/length))
@@ -377,26 +324,23 @@ def glimmer(genome, counts, immScores, mcLength=None):
                 goodORFs.append((orf[0], orf[1], i, rfScores[3]/length))
                 approved[i] += 1
             
-            '''
-            bounds = orf.findBestORF()
-            if not bounds == None:
-                goodORFs.append(bounds)
-            '''
-
             totals[i] += 1
 
-    # resolve overlapping orfs
+    ''' resolve overlapping orfs '''
     minOverlap = 20
     goodORFs = sorted(goodORFs)
     approvedORFs = []
     suspectORFs = []
 
+    # If 2 ORFs overlap, score the overlapping region in each reading frame.
+    # If one ORF is longer than the other and the highest scoring reading frame of the overlap
+    #  is the same as the reading frame of the longer ORF, discard the shorter ORF.
     i = 0
     while i < len(goodORFs)-1:
         j = i+1
         while j < len(goodORFs) and (goodORFs[i][1] - goodORFs[j][0] >= minOverlap):
             if mcLength == None:
-                overlapScores = scoreHMM((goodORFs[j][0], goodORFs[i][1]), counts, immScores)
+                overlapScores = scoreIMM((goodORFs[j][0], goodORFs[i][1]), counts, immScores)
             else:
                 overlapScores = scoreMarkovChain((goodORFs[j][0], goodORFs[i][1]), mcLength, counts)
 
@@ -413,6 +357,7 @@ def glimmer(genome, counts, immScores, mcLength=None):
             j += 1
         i += 1
 
+    # Any remaining ORFs that overlap are suspect. All others are approved.
     suspected = [0]*len(goodORFs)
     for i in xrange(len(goodORFs)):
         j = 1
@@ -429,6 +374,9 @@ def glimmer(genome, counts, immScores, mcLength=None):
     return approvedORFs, suspectORFs
 
 def writeORFs(approvedORFs, suspectORFs):
+    ''' Write the set of ORFs to a file 
+    '''
+
     print '  %d approved, %d suspected ORFs found' % (len(approvedORFs), len(suspectORFs))
 
     with open('predicted.txt', 'w') as f:
@@ -437,7 +385,11 @@ def writeORFs(approvedORFs, suspectORFs):
         for orf in suspectORFs:
             f.write('*' + str(orf[0]) + '\t' + str(orf[1]) + '\n')
 
-def scoreHMM(orf, counts, immScores):
+def scoreIMM(orf, counts, immScores):
+    ''' Return a list of the IMM scores for the given orf in each of the 7 reading frames.
+        counts is the set of kmer counts computer from the training data.
+    '''
+
     # Score the given region in first 3 reading frames
     rfScores = []
     for rf in xrange(3):
@@ -465,6 +417,9 @@ def scoreHMM(orf, counts, immScores):
     return rfScores
 
 def scoreMarkovChain(orf, length, counts):
+    ''' Return a list of the fixed-length Markov model scores for the given orf in each of the 7 reading frames.
+        counts is the set of kmer counts computer from the training data.
+    '''
     # Score the given region in first 3 reading frames
     rfScores = []
     for rf in xrange(3):
@@ -494,35 +449,35 @@ def scoreMarkovChain(orf, length, counts):
     return rfScores
 
 def imm(rf, seq, counts, immScores):
+    ''' Return the interpolated Markov model score for the last character of seq appearing in the given
+        reading frame following the first k-1 characters of seq.
+
+        counts contains the counts of each kmer in each reading frame, calculated during training
+        immScores contains the probabilities of each kmer in each reading frame (computed lazily)
+    '''
+
+    # Check if we have calculated this IMM score yet
     if seq in immScores[rf][len(seq)-1]:
         return immScores[rf][len(seq)-1][seq]
 
     prefix = seq[:-1]
 
+    # If the sequence is of length 1 (i.e. no previous bases), we cannot interpolate any further, so IMM = Pr
     if len(seq) == 1:
         probs = [0]*4
         for i in xrange(4):
             immScores[rf][0][prefix+nts[i]] = prob(rf, prefix+nts[i], counts)
         return immScores[rf][len(seq)-1][seq]
 
+
     length = len(seq)-1
-    #if seq in counts[rf][length] and counts[rf][length][seq] > countThreshold:
     if prefix in counts[rf][length-1] and counts[rf][length-1][prefix] > countThreshold:
+        # If we see the context at least countThreshold times, we can be very confident in the probability, 
+        #  so don't use any shorter contexts
         wgt = 1
     else:
-        '''
-        currCounts = [1]*4
-        nextCounts = [1]*4
-        for i in xrange(4):
-            tempSeq = prefix + nts[i]
-            if tempSeq in counts[rf][length]:
-                currCounts[i] += counts[rf][length][tempSeq]
-
-            tempSeq = prefix[1:] + nts[i]
-            if tempSeq in counts[rf][length-1]:
-                nextCounts[i] += counts[rf][length-1][tempSeq]
-        '''
-
+        # Compute the weight to assign to this context by calculating how similar the set of counts for
+        #  this context is to the IMM scores for the next smallest context
         currCounts = [1]*4
         currTotal = 4
         for i in xrange(4):
@@ -531,13 +486,10 @@ def imm(rf, seq, counts, immScores):
                 currCounts[i] += counts[rf][length][tempSeq]
                 currTotal += counts[rf][length][tempSeq]
 
-        #currProbs = [0]*4
         nextProbs = [0]*4
         for i in xrange(4):
-            #currProbs[i] = float(currCounts[i]) / float(currTotal)
             nextProbs[i] = imm(rf, prefix[1:]+nts[i], counts, immScores)
         
-        #d = 1 - scipy.stats.chi2_contingency(np.array([currCounts, nextCounts]))[1]
         d = scipy.stats.chi2_contingency(np.array([currCounts, nextProbs]))[1]
 
         if d < 0.5:
@@ -548,18 +500,22 @@ def imm(rf, seq, counts, immScores):
             else:
                 wgt = 0
 
-    #score = wgt * prob(rf, seq, counts) + (1-wgt) * imm(rf, seq[1:], counts, immScores)
+    # Compute the IMM score as a weight sum of the probability for this context + the IMM score for the next smallest context
     probs = [0]*4
     for i in xrange(4):
         probs[i] = wgt * prob(rf, prefix+nts[i], counts) + (1-wgt) * imm(rf, prefix[1:]+nts[i], counts, immScores)
     totalProb = sum(probs)
 
+    # Normalize IMM scores to 1
     for i in xrange(4):
         immScores[rf][len(seq)-1][prefix+nts[i]] = float(probs[i]) / totalProb
 
     return immScores[rf][len(seq)-1][seq]
 
 def prob(rf, seq, counts):
+    ''' Return the probability of the last character of seq appearing in the given reading frame following 
+        the first k-1 characters of seq. Applies +1 smoothing to the counts.
+    '''
     length = len(seq)-1
 
     # Count all possible next nucleotides, with +1 smoothing
@@ -574,8 +530,9 @@ def prob(rf, seq, counts):
         return float(1+counts[rf][length][seq]) / float(totalNum)
 
 def runIMM():
+    ''' Run the IMM classifier and print the accuracy of the results.
+    '''
     print 'IMM max length %d:' % maxLength
-    #maxLength = maxImmLength
     counts, immScores = init()
 
     startTime = time.time()
@@ -587,10 +544,12 @@ def runIMM():
     print '  %0.2fs total (%0.2fs to build, %0.2fs to run)' % (endTime-startTime, buildTime-startTime, endTime-buildTime)
     writeORFs(approved, suspect)
 
-    compareResults.compare('trueORFs.txt', 'predicted.txt')
+    compareResults.compare(trueFile, 'predicted.txt')
     print ''
 
 def runMC(length):
+    ''' Run the fixed-length Markov model classifier and print the accuracy of the results.
+    '''
     print 'Markov Chain length %d:' % length
     counts, immScores = init()
 
@@ -603,7 +562,7 @@ def runMC(length):
     print '  %0.2fs total (%0.2fs to build, %0.2fs to run)' % (endTime-startTime, buildTime-startTime, endTime-buildTime)
     writeORFs(approved, suspect)
 
-    compareResults.compare('trueORFs.txt', 'predicted.txt')
+    compareResults.compare(trueFile, 'predicted.txt')
     print ''
 
 def runIterativeIMM():
@@ -633,7 +592,7 @@ def runIterativeIMM():
         print '    Found %d approved, %d suspected' % (len(approved), len(suspect))
 
         writeORFs(approved, suspect)
-        compareResults.compare('trueORFs.txt', 'predicted.txt')
+        compareResults.compare(trueFile, 'predicted.txt')
         print ''
 
         newORFs = approved+suspect
@@ -646,7 +605,7 @@ def runIterativeIMM():
     print 'Completed after %d iterations' % i
 
 def runIterativeMC(length):
-    ''' Repeatedly train on the set of predicted ORFs, and use a fixed-length MM predict a new set of ORFs.
+    ''' Repeatedly train on the set of predicted ORFs, and use a fixed-length MM to predict a new set of ORFs.
         Continue until the set of predicted ORFs does not change.
     '''
 
@@ -672,7 +631,7 @@ def runIterativeMC(length):
         print '    Found %d approved, %d suspected' % (len(approved), len(suspect))
 
         writeORFs(approved, suspect)
-        compareResults.compare('trueORFs.txt', 'predicted.txt')
+        compareResults.compare(trueFile, 'predicted.txt')
         print ''
 
         newORFs = approved+suspect
@@ -685,6 +644,8 @@ def runIterativeMC(length):
     print 'Completed after %d iterations' % i
 
 def noChange(oldORFs, newORFs):
+    ''' Returns true if the sets of ORFs are exactly the same, false otherwise.
+    '''
     if not len(oldORFs) == len(newORFs):
         return False
 
@@ -692,29 +653,42 @@ def noChange(oldORFs, newORFs):
     newORFs.sort()
     return (oldORFs == newORFs)
 
-genome = readFASTA(sys.argv[1])
+if __name__ == '__main__':
+    ''' Main function. Runs either IMM or fixed-length MC classifier, iterative or non-iterative.
+    '''
 
 
-for i in xrange(maxLength+1):
-    runMC(i)
-for i in xrange(maxLength+1):
-    maxLength = i
-    runIMM()
+    # Print file's docstring if -h is invokedc
+    parser = argparse.ArgumentParser(description=__doc__, 
+            formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--genome', type=str, required=True, 
+        help='Full path to FASTA file containing genome to process')
+    parser.add_argument('--max-length', type=int, required=True, 
+        help='Maximum kmer length')
+    parser.add_argument('--trueORFs', type=str, required=True, 
+        help='File containing true gene boundaries')
+    parser.add_argument("--fixed", help="Run fixed-length Markov Chain. If not present, run IMM",
+        action="store_true")
+    parser.add_argument("--iterative", help="Run iterative. If not present, run once.",
+        action="store_true")
+    
+    args = parser.parse_args(sys.argv[1:])
+    
+    genome = readFASTA(args.genome)
+    maxLength = args.max_length
+    trueFile = args.trueORFs
+    
+    if args.iterative:
+        if args.fixed:
+            runIterativeMC(maxLength)
+        else:
+            runIterativeIMM()
 
-'''
-for i in xrange(8):
-    maxLength = 8
-    scoreThreshold = -1.3 + 0.01*i
-    print 'scoreThreshold = %0.2f' % (scoreThreshold)
-    runIMM() 
-'''
-
-#maxLength = 8
-#runIMM()
-#runMC(6)
-
-#runIterativeIMM()
-#runIterativeMC(6)
+    else:
+        if args.fixed:
+            runMC(maxLength)
+        else:
+            runIMM()
 
 
 

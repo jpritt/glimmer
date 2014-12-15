@@ -5,44 +5,32 @@ import scipy.stats
 import sys
 
 class HIMM(object):
-    ''' Simple Hidden Markov Model implementation.  User provides
-        transition, emission and initial probabilities in dictionaries
-        mapping 2-character codes onto floating-point probabilities
-        for those table entries.  States and emissions are represented
-        with single characters.  Emission symbols comes from a finite.  '''
+    ''' Interpolated Hidden Markov Model implementation.
+    '''
     
     countThreshold = 400.0
 
-    def __init__(self, counts, singleProbs, probSwitch, maxLength):
-        ''' Initialize the HIMM given 
-            counts - counts of each kmer
-            immProbs - empty, to be filled out with calculated IMM probs
-            singleProbs - For each state, probability of each single nucleotide occurring
+    def __init__(self, counts, maxLength):
+        ''' Initialize the HIMM. 
+
+            counts - counts of kmers for each state transition
             maxLength - maximum kmer length used
         '''
         
         self.counts = counts
-        self.singleProbs = singleProbs
-        self.probSwitch = probSwitch
         self.maxLength = maxLength
 
         self.nts = ['A', 'C', 'G', 'T']
+
+        # Each state can be follow by 1 of the exon states or 1 of the intron states.
+        # Uppercase nts indicate a base in the exon state, lowercase nts indicate a base in the intron state.
         self.stateNTs = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't']
 
         # For each state, possible next states with non-zero probability
         self.nextStates = [[1,3], [2,3], [0,3], [1,3], [2,3], [0,3]]
-        #self.nextStates = [[1,3], [2,4], [0,5], [1,3], [2,4], [0,5]]
 
-        '''
-        self.immProbs = []
-        for i in xrange(len(counts)):
-            self.immProbs.append([])
-            for j in xrange(len(counts[0])):
-                self.immProbs[i].append([])
-                for k in xrange(self.maxLength+1):
-                    self.immProbs[i][j].append(dict())
-        '''
-
+        # Tables containing IMM probabilities, one for each possible state transiton.
+        # Tables are initially empty, filled lazily to save time.
         # 6 tables: 0 -> (1,3), 1 -> (2,4), 2 -> (0,5), 3 -> (1,3), 4 -> (2,4), 5 -> (0,5)
         self.immProbs = []
         for i in xrange(6):
@@ -50,14 +38,17 @@ class HIMM(object):
             for j in xrange(self.maxLength+1):
                 self.immProbs[i].append(dict())
 
+        # If not interpolated, uses a standard fixed-length Hidden Markov Model
         self.interpolated = True
         self.fixedLength = 0
 
     def setFixedLength(self, length):
+        ''' Use a fixed-length HMM. '''
         self.interpolated = False
         self.fixedLength = length
 
     def setInterpolated(self):
+        ''' Use an Interpolated HMM. '''
         self.interpolated = True
     
     def viterbi(self, x):
@@ -78,6 +69,7 @@ class HIMM(object):
                 mat[i, 0] = -100000
             startBase = 1
         else:
+            # If fixed-length, set first fixedLength states to be exons.
             for j in xrange(self.fixedLength):
                 mat[0, j] = 0
                 for i in xrange(1, nrow):
@@ -91,27 +83,12 @@ class HIMM(object):
             else:
                 length = self.fixedLength
 
-            #if j > 885 and j < 890:
-            #    print 'j = %d' % j
-
             for newState in xrange(0, nrow):
                 # Exonic states
                 if newState < 3:
-                    # possible previous states: (newState-1)%3, (newState-1)%3 + 3
-                    #if self.interpolated:
-                    #print 'Calculating imm(%d)' % (x[j-length:j+1])
                     probA = mat[(newState-1)%3, j-1] + math.log(self.imm((newState-1)%3, newState, x[j-length:j+1]), 2)
                     probB = mat[(newState-1)%3+3, j-1] + math.log(self.imm(3, newState, x[j-length:j+1]), 2)
-                    #else:
-                    #    probsA = self.getProbs((newState-1)%3, x[j-length:j])
-                    #    probA = mat[(newState-1)%3, j-1] + math.log(probsA[x[j]], 2)
-
-                    #    probsB = self.getProbs(3, x[j-length:j])
-                    #    probB = mat[(newState-1)%3+3, j-1] + math.log(probsB[x[j]], 2)
-
-                    #print '  State %d:' % newState
-                    #print '    %d --> %f (%f + %f)' % ((newState-1)%3, probA, mat[(newState-1)%3, j-1], math.log(self.imm((newState-1)%3, newState, x[j-length:j+1]), 2))
-                    #print '    %d --> %f (%f + %f)' % ((newState-1)%3+3, probB, mat[(newState-1)%3+3, j-1], math.log(self.imm(3, newState, x[j-length:j+1]), 2))
+                    
                     if probA > probB:
                         mat[newState, j] = probA
                         matTb[newState, j] = (newState-1)%3
@@ -121,21 +98,8 @@ class HIMM(object):
 
                 # Intronic states
                 else:
-                    # possible previous states: newState-3, newState
-                    #if self.interpolated:
                     probA = mat[newState-3, j-1] + math.log(self.imm(newState-3, 3, x[j-length:j+1]), 2)
                     probB = mat[newState, j-1] + math.log(self.imm(3, 3, x[j-length:j+1]), 2)
-                    #else:
-                    #    probsA = self.getProbs(newState-3, x[j-length:j])
-                    #    probA = mat[newState-3, j-1] + math.log(probsA[x[j].lower()], 2)
-
-                    #    probsB = self.getProbs(3, x[j-length:j])
-                    #    probB = mat[newState, j-1] + math.log(probsB[x[j].lower()], 2)
-
-
-                    #print '  State %d:' % newState
-                    #print '    %d --> %f' % (newState-3, probA)
-                    #print '    %d --> %f' % (newState, probB)
 
                     if probA > probB:
                         mat[newState, j] = probA
@@ -143,22 +107,6 @@ class HIMM(object):
                     else:
                         mat[newState, j] = probB
                         matTb[newState, j] = newState
-
-        '''
-        for i in xrange(6):
-            for j in xrange(16,26):
-                sys.stdout.write('%0.2f\t' % mat[i,j])
-                #sys.stdout.write(str(mat[i,j]) + '\t')
-            print ''
-        print ''
-        for i in xrange(6):
-            for j in xrange(16,26):
-                sys.stdout.write('%d\t' % matTb[i,j])
-                #sys.stdout.write(str(matTb[i,j]) + '\t')
-            print ''
-        print ''
-        exit()
-        '''
         
 
         # Find final state with maximal log probability
@@ -184,14 +132,22 @@ class HIMM(object):
         return path
 
     def imm(self, oldState, newState, seq):
+        ''' Return the interpolated Markov model score for the last character of seq appearing in newState
+            following the first k-1 characters of seq in oldState.
+        '''
+
+        # Use lowercase characters for intron regions
         if newState > 2:
             seq = seq[:-1] + seq[-1].lower()
+
+        # If it has already been calculated, no need to recomputer
         if seq in self.immProbs[oldState][len(seq)-1]:
             return self.immProbs[oldState][len(seq)-1][seq]
 
+
         prefix = seq[:-1]
 
-
+        # If length is 1, don't interpolate. Just calculate P for each character that could come after oldState.
         if len(seq) == 1:
             probs = self.getProbs(oldState, '')
             totalProb = 0
@@ -204,8 +160,10 @@ class HIMM(object):
             return self.immProbs[oldState][0][seq]
 
         length = len(seq)-1
-
         if self.interpolated:
+            # Assign a weight to the probability for the current context length based on the Chi-square
+            #  value of the probabilities for the current context length compared to the interpolated
+            #   probabilities for the next smallest context length.
             relCount = 0
             for s in self.nextStates[oldState]:
                 if prefix in self.counts[oldState][s][len(prefix)-1]:
@@ -234,8 +192,12 @@ class HIMM(object):
                 else:
                     wgt = d * relCount / self.countThreshold
         else:
+            # If we're using the fixed-length model, don't interpolate at all, just return P
             wgt = 1
 
+        # A character in oldState can be followed by 'A', 'C', 'G', or 'T' in a certain exonic newState, or
+        #   'a', 'c', 'g', or 't', in a certain intronic newState.
+        # Compute the interpolated probabilities of each of these and store in the immProbs table for oldState.
         probs = self.getProbs(oldState, prefix)
         totalProb = 0
         for k in probs.keys():
@@ -250,17 +212,17 @@ class HIMM(object):
                 probs[k] = wgt * probs[k] + (1-wgt) * self.imm(oldState, newS, prefix[1:]+k)
             totalProb += probs[k]
 
+        # Normalize probabilities to 1
         for n in self.stateNTs:
             self.immProbs[oldState][len(seq)-1][prefix+n] = float(probs[n]) / totalProb
 
         return self.immProbs[oldState][len(seq)-1][seq]
 
     def getProbs(self, oldState, prefix):
-        #if newState > 3:
-        #    newState = 3
-
-        #if not newState in self.nextStates[oldState]:
-        #    return None
+        ''' Return the list of probabilities of each nucleotide appearing after the given prefix in the given oldState.
+            Uppercase bases indicate that the new state is the exonic reading frame state which can appear after oldState.
+            Lowercase bases indicate that the new state is the intron reading frame state which can appear after oldState.
+        '''
 
         length = len(prefix)
 
@@ -283,33 +245,3 @@ class HIMM(object):
         for k in counts.keys():
             counts[k] = float(counts[k]) / totalCount
         return counts
-
-    '''
-    def prob(self, oldState, newState, seq):
-        if newState > 3:
-            newState = 3
-
-        if not newState in self.nextStates[oldState]:
-            return 0
-
-        length = len(seq)-1
-
-        # Count all possible next nucleotides, with +1 smoothing
-        totalNum = len(self.stateNTs)
-        for i in self.nextStates[oldState]:
-            for n in self.nts:
-                if seq[:-1]+n in self.counts[oldState][newState][length]:
-                    totalNum += self.counts[oldState][newState][length][seq[:-1]+n]
-
-        if not seq in self.counts[oldState][newState][length]:
-            return 1.0 / float(totalNum)
-        else:
-            return float(1+self.counts[oldState][newState][length][seq]) / float(totalNum)
-    '''
-
-    def singleProb(self, state, nt):
-        totalNum = 4
-        for n in self.nts:
-            totalNum += self.singleProbs[state][n]
-
-        return float(1+self.singleProbs[state][nt]) / float(totalNum)
