@@ -31,11 +31,9 @@
 
 \section{Introduction}
 \paragraph{}
-In the field of computational biology, gene identification and location is important in various applications such as controlling the expression level of genes. In the scope of the project, we seek to investigate a highly accurate gene identification tool which distinguishes coding and non-coding sections of the genome. We will also compare the IMM with fixed length Markov chains for the classification of coding regions. GLIMMER (Gene Locator and Interpolated Markov ModelER), is a tool designed to find the genes inside a microbial genome. It uses an interpolated Markov model which is an improvement upon the Markov chain model. In the original GLIMMER publication, the authors noted that from a test batch of hundreds of bacterial genomes, the software was able to achieve over 95\% accuracy on gene identification. For our project, we seek to implement the IMM algorithm used in GLIMMER and to match our classification results with that of the publication's. Next we will run our algorithm on eukaryotic genomes to examine the gene identification performances on eukaryotic species. We expect the accuracy of gene identification to drop significantly for eukaryotic genes, since eukaryotic genomes have highly complex coding sequences than that of the prokaryotes.\\
+In the field of computational biology, gene identification and location is important in various applications such as controlling the expression level of genes. In the scope of the project, we seek to investigate a highly accurate gene identification tool which distinguishes coding and non-coding sections of the genome. We will also compare the IMM with fixed length Markov chains for the classification of coding regions. GLIMMER (Gene Locator and Interpolated Markov ModelER), is a tool designed to find the genes inside a microbial genome. It uses an interpolated Markov model which is an improvement upon the Markov chain model. In the original GLIMMER publication, the authors noted that from a test batch of hundreds of bacterial genomes, the software was able to achieve over 95\% accuracy on gene identification. For our project, we seek to implement the IMM algorithm used in GLIMMER and to match our classification results with that of the publication's. Next we will run our algorithm on eukaryotic genomes to examine the gene identification performances on eukaryotic species. We expect the accuracy of gene identification to drop significantly for eukaryotic genes, since eukaryotic genomes have highly complex coding sequences than that of the prokaryotes.
 
-GLIMMER uses interpolated Markov models. IMMs are more powerful than simple Markov chains. A fixed-order Markov chain uses a fixed number of preceding bases to predict the DNA sequence. For example, a 5th order Markov chain would use five previous bases to predict the next base in the sequence. Markov chain run into problems when the training data is low such that the feature vectors created is too sparse to estimate the probability of bases after every combination of 5-mers. A kth-order Markov model would require up to $4^ (k+1)$ probabilities to be estimated from the training data. In order to estimate the probabilities, at least few occurrences of all possible k-mers must be present to yield a valid estimate. \\
-
-It is often difficult for a training genome to have sufficient 5mers to provide a valid estimate. The interpolated Markov Model works around this problem by using a combination of probabilities of different length oligomers to give a better prediction. The IMM assigns different weights to each oligomer depending on its number of occurrences within the training DNA sequence. A highly frequent k-mer occurrence receives a higher weight while a low occurrence k-mer receives a lower one. When the sample data lacks a certain occurrences for a specific length oligomer, the IMM will resort to using a combination of the shorter oligomers sharing similar prefix sequence for its decision. 
+To compare our IMM implementation, we will be using a fixed-order Markov chain. A fixed-order Markov chain uses a fixed number of preceding bases to predict the DNA sequence. For example, a 5th order Markov chain would use five previous bases to predict the next base in the sequence. Markov chain run into problems when the training data is low so that the feature vectors, in our case, DNA base combinations, are too sparsely populated to estimate the probability of a base coming after. To illustrate, a $k^{th}$-order Markov model would require up to $4^{k+1}$ probabilities to be estimated from the training data. In order to have valid estimates, there must a be a certain number of occurrences of all possible k-mers in our training data, and this is rarely the case. This problem is addressed in the implementation of the interpolated Markov Model. The IMM assigns different weights to k-mer sequences of varied length depending on its number of occurrences within the training DNA sequence. A highly frequent k-mer occurrence receives a higher weight while a low occurrence k-mer receives a lower one. When the sample data lacks a certain occurrences for a specific length k-mer, the IMM will resort to using a combination of the shorter k-mers sharing similar prefix for classification. 
 
 
 \subsection{Reading Frame and Coding Sequence Description}
@@ -67,7 +65,7 @@ For our classification step, we first find a list of all potential ORFs, defined
 \subsection{Iterative GLIMMER}
 We attempted to improve our GLIMMER results by iteratively training and classifying multiple times. In the first iteration, we trained our IMM on long ORFs as described in the Training section above and then classified all potential ORFs. In all subsequent iterations, we trained our model on the ORFs approved by the previous classification step and then reclassified all the ORFs.
 
-We hypothesized that the Iterative IMM would yield more accurate results than the single-iteration IMM. We theorized that the long ORFs used to train the initial IMM might not be representative of all ORFs, and iterative training would allow us to train on a more accurate sample of the ORFs. Surprisingly, however, this was not the case. On the contrary, we found that iterative training caused our accuracy to decrease with each iteration. We abandoned this idea when we found that it didn't work.
+We hypothesized that the Iterative IMM would yield more accurate results than the sin\textit{gl}e-iteration IMM. We theorized that the long ORFs used to train the initial IMM might not be representative of all ORFs, and iterative training would allow us to train on a more accurate sample of the ORFs. Surprisingly, however, this was not the case. On the contrary, we found that iterative training caused our accuracy to decrease with each iteration. We abandoned this idea when we found that it didn't work.
 
 
 \subsection{Exon/Intron Classification with Hidden Interpolated Markov Models}
@@ -163,9 +161,9 @@ While not mentioned in the original GLIMMER publication, gene identification on 
 
 We noticed the poor gene identification accuracy. This result is expected, since Eukaryotic genomes are much more complex than that of Prokaryote’s. For example, the extra non-coding intron sequences and the regulatory sequences such as promoters and enhancers increase the noise which our gene identifier has to go through. 
 
-\subsection{Gene finding on with interpolated Hidden Markov Models}
+\subsection{Gene finding with Hidden interpolated Markov Models}
 
-
+We shifted our approach for eukaryotic gene finding by implementing the Hidden interpolated Markov model. Using the same set of ORF preprocessing parameters, we ran the D. melanogaster genome through our HIMM classifier. The results from the HIMM are compared against the HMM of the same order and are shown on Figure 6.
 \begin{figure}
 	\begin{center}
 		\includegraphics[scale=0.8]{plots/accuracy_vs_model_complexity_drosophila_hmm.png}
@@ -174,18 +172,28 @@ We noticed the poor gene identification accuracy. This result is expected, since
 \end{figure}
 
 
+
+
 \section{Discussion}
 
-When comparing our 8th order IMM results against the same model as used in the publication, we notice that our accuracy value, of 93.78 \%, differs from the accuracy of 97.8 \% reported. There are several reasons that might have caused this difference.
+When comparing our $8^{th}$ order IMM results against the same model as used in the publication, we noticed that our accuracy value, of 93.78 \%, differs from the accuracy of 97.8 \% reported. There are reasons that might have caused this difference.
 
-We noticed there were 1717 annotated genes for the publication while our annotated gene file only contained 1174 genes. We suspect that they had additional experimental data to work with. This difference in the number of annotated genes only affected the number of false positive ORF turn outs in our results. Since we are mainly focused on replicating the results for true positives, we decided to ignore this difference.
+For one reason, we noticed that there were 1717 annotated genes used for the publication while we only used an annotated gene file with 1174 genes. We suspect that the authors of GLIMMER might have had additional experimental data to work with. The difference in the number of annotated genes will largely affect the number of false positive ORF turn outs in our results, but the difference in the identification accuracy could also stem from this problem.
 
-From the fixed-length Markov chain results, we noticed that the identification accuracy peaks at intervals of three bases. We think that this might be due to the codon length. 
+We noticed something interesting from the fixed-length Markov chain results that is not apparent in the IMM results. The identification accuracy of the fixed-length Markov chain peaks at intervals of three bases. We think that this might be due to the fact that codons are coded by 3 bases. 
 
 Overall, we are satisfied with the sensitivity of our IMM on the identification of true bacterial genes.
 
+Based on the results from our IMM gene finder for prokaryotic genomes, we were less thrilled when we tested our IMM on the eukaryotic D. \emph{melanogaster} genome. At an $8^{th}$ order model complexity, we only have a gene identification accuracy of 7.97 \% for the IMM. We expected that due to complexities in the eukaryotic genome, as previously mentioned, the gene finder's accuracy will be very low. 
+
+With our HIMM approach, we tested using the same genome data set. Our HIMM came out to be very successful in classifying the DNA splice sites, and finding the transitions between intron and exon sequences. At a $8^{th}$ order model complexity, gene identification with the HIMM is roughly 92 \%. 
+
+We expected the accuracy of the HMM predictor, to which we are comparing the HIMM against to drop. As we increased the model order for the HMM, the features trained upon will become more and more sparse. At a certain point, the $6^{th}$ order HMM in our case, there would be DNA sequences that have too few occurrences in the training set for the model to generate a valid probability from. We attribute the fall in gene finding accuracy at the $6^{th}$ order HMM to the feature sparsity problem. As discussed for the IMM, the HIMM alleviates this problem by weighing in shorter k-mer length sequences preceding the current nucleotide and achieves a better result as the model complexity increases.
+
 \subsection{Comparison to Project Proposal}
-Judging by our original project proposal, we have accomplished the must-achieve milestones by implementing an IMM classification program closely following the program specifications of the GLIMMER publication. We have also managed to finish the features mentioned in the expected to achieve section. We have written a Markov model to compare the results obtained to that of the IMM’s. If we had additional time, we would likely to have accomplished the reach-goals for improving upon the IMM’s accuracy by training additional model organisms and to implement an interpolated context model to decide which positions to use for prediction.
+Judging by our original project proposal, we have accomplished the must-achieve milestones by implementing an IMM classification program closely following the program specifications of the GLIMMER publication. We have also managed to finish the features mentioned in the expected to achieve section. We have written a Markov model to compare the results obtained to that of the IMM’s. Surprisingly, we have also accomplished our original reach-goals for looking into iterative approaches to optimize the IMM’s accuracy.
+We extended beyond our original plans by implementing a Hidden interpolated Markov Model for eukaryotic gene finding.
+An idea for future work for this project would be to look at GLIMMER2.0 and try to implement an interpolated context model that decides which positions to use for prediction.
 
 
 \begin{thebibliography}{}

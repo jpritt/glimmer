@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 22:39
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 23:38
 entering extended mode
 **writeup.tex
 
@@ -499,31 +499,6 @@ File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 34.
 
-Underfull \hbox (badness 2582) in paragraph at lines 34--35
- \OT1/ptm/m/n/10.95 In the field of com-pu-ta-tional bi-ol-ogy, gene
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 34--35
-
- []
-
-
-Underfull \hbox (badness 1888) in paragraph at lines 36--37
-\OT1/ptm/m/n/10.95 IMMs are more pow-er-ful than sim-ple Markov
- []
-
-
-Underfull \hbox (badness 1199) in paragraph at lines 36--37
-\OT1/ptm/m/n/10.95 base in the se-quence. Markov chain run into
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 36--37
-
- []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
@@ -532,21 +507,22 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 ]
-Underfull \hbox (badness 2326) in paragraph at lines 58--59
+Underfull \hbox (badness 2326) in paragraph at lines 56--57
 \OT1/ptm/m/n/10.95 clas-si-fi-ca-tion be-cause nu-cleotides, es-pe-cially in
  []
 
-[2] <HMM.png, id=19, 471.7625pt x 377.41pt>
+[2] <HMM.png, id=20, 471.7625pt x 377.41pt>
 File: HMM.png Graphic file (type png)
  <use HMM.png>
-Package pdftex.def Info: HMM.png used on input line 80.
+Package pdftex.def Info: HMM.png used on input line 78.
 (pdftex.def)             Requested size: 188.70164pt x 150.96132pt.
- [3]
+ [3 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
+up/HMM.png>]
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
 
-Underfull \hbox (badness 6204) in paragraph at lines 103--104
+Underfull \hbox (badness 6204) in paragraph at lines 101--102
 []\OT1/ptm/m/n/10.95 We im-ple-mented and tested a fixed-length
  []
 
@@ -558,33 +534,32 @@ File: plots/accuracy_vs_model_complexity.png Graphic file (type png)
 
 <use plots/accuracy_vs_model_complexity.png>
 Package pdftex.def Info: plots/accuracy_vs_model_complexity.png used on input l
-ine 112.
+ine 110.
 (pdftex.def)             Requested size: 210.06506pt x 187.90225pt.
- [4 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
-up/HMM.png> <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimm
-er/writeup/plots/accuracy_vs_model_complexity.png>]
-<plots/runtime_vs_model_complexity.png, id=32, 292.09125pt x 168.63pt>
+
+<plots/runtime_vs_model_complexity.png, id=26, 292.09125pt x 168.63pt>
 File: plots/runtime_vs_model_complexity.png Graphic file (type png)
 
 <use plots/runtime_vs_model_complexity.png>
 Package pdftex.def Info: plots/runtime_vs_model_complexity.png used on input li
-ne 121.
+ne 119.
 (pdftex.def)             Requested size: 233.6733pt x 134.90417pt.
 
-Overfull \hbox (6.02269pt too wide) in paragraph at lines 121--122
+Overfull \hbox (6.02269pt too wide) in paragraph at lines 119--120
  [] 
  []
 
-
+[4 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/writeu
+p/plots/accuracy_vs_model_complexity.png>]
 <plots/false_positives_vs_model_complexity.png, id=33, 289.08pt x 170.43675pt>
 File: plots/false_positives_vs_model_complexity.png Graphic file (type png)
 
 <use plots/false_positives_vs_model_complexity.png>
 Package pdftex.def Info: plots/false_positives_vs_model_complexity.png used on 
-input line 130.
+input line 128.
 (pdftex.def)             Requested size: 231.2643pt x 136.34956pt.
 
-Overfull \hbox (3.6137pt too wide) in paragraph at lines 130--131
+Overfull \hbox (3.6137pt too wide) in paragraph at lines 128--129
  [] 
  []
 
@@ -592,9 +567,12 @@ Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
 
-Underfull \hbox (badness 5133) in paragraph at lines 155--156
+Underfull \hbox (badness 5133) in paragraph at lines 153--154
 \OT1/ptm/m/n/10.95 While not men-tioned in the orig-i-nal GLIM-
  []
+
+
+Underfull \vbox (badness 7012) has occurred while \output is active []
 
 
 <plots/accuracy_vs_model_complexity_drosophila.png, id=34, 300.52275pt x 222.23
@@ -603,10 +581,10 @@ File: plots/accuracy_vs_model_complexity_drosophila.png Graphic file (type png)
 
  <use plots/accuracy_vs_model_complexity_drosophila.png>
 Package pdftex.def Info: plots/accuracy_vs_model_complexity_drosophila.png used
- on input line 159.
+ on input line 157.
 (pdftex.def)             Requested size: 240.41852pt x 177.78444pt.
 
-Overfull \hbox (12.76791pt too wide) in paragraph at lines 159--160
+Overfull \hbox (12.76791pt too wide) in paragraph at lines 157--158
  [] 
  []
 
@@ -620,20 +598,20 @@ File: plots/accuracy_vs_model_complexity_drosophila_hmm.png Graphic file (type
 png)
  <use plots/accuracy_vs_model_complexity_drosophila_hmm.png>
 Package pdftex.def Info: plots/accuracy_vs_model_complexity_drosophila_hmm.png 
-used on input line 171.
+used on input line 169.
 (pdftex.def)             Requested size: 236.5641pt x 155.13979pt.
 
-Overfull \hbox (8.9135pt too wide) in paragraph at lines 171--172
+Overfull \hbox (8.9135pt too wide) in paragraph at lines 169--170
  [] 
  []
 
 
-Underfull \hbox (badness 5077) in paragraph at lines 173--173
+Underfull \hbox (badness 5077) in paragraph at lines 171--171
 []\OT1/ptm/m/n/10 Figure 6: []Ac-cu-racy com-par-i-son for HIMM and
  []
 
 
-Underfull \hbox (badness 1137) in paragraph at lines 173--173
+Underfull \hbox (badness 1137) in paragraph at lines 171--171
 \OT1/ptm/m/n/10 HMM mod-els at dif-fer-ent model com-plex-ity for \OT1/ptm/m/it
 /10 D.
  []
@@ -667,7 +645,7 @@ Here is how much of TeX's memory you used:
  14734 multiletter control sequences out of 15000+200000
  22331 words of font info for 57 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 55i,10n,54p,1306b,273s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,10n,54p,1329b,273s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Progra
 m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program 
 Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Fil
@@ -680,7 +658,7 @@ TeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX
 s/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw
 /times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmr
 i8a.pfb>
-Output written on writeup.pdf (6 pages, 224259 bytes).
+Output written on writeup.pdf (6 pages, 226222 bytes).
 PDF statistics:
  78 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
