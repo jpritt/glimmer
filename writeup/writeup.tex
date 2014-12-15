@@ -37,7 +37,7 @@ Interpolated Markov Models address this issue by assigning different weights to 
 
 GLIMMER (Gene Locator and Interpolated Markov ModelER) is a tool that uses IMMs to find the genes inside a microbial genome. In the original GLIMMER publication, the authors noted that from a test batch of hundreds of bacterial genomes, the software was able to achieve over 95\% accuracy on gene identification. For our project, we first implemented the IMM algorithm used in GLIMMER and compared our classification results with that of the publication's. We also fully analyzed the improvements of and IMM-based gene classification method over a classifier that uses a fixed-length Markov model. Next we ran our algorithm on eukaryotic genomes to examine the gene identification performances on eukaryotic species. We expected the accuracy of gene identification to drop significantly for eukaryotic genes, since eukaryotic genomes have highly complex coding sequences than that of the prokaryotes.
 
-A Hidden Markov Model is used when a process that follows a Markov model has some emission states that mask the underlying state. For example, consider the problem of finding exons and introns in a gene sequence. While the underlying sequence of exon and intron states can be described be a Markov model, the visible states (A, C, G, and T) do not distinguish between states. HMMs can be solved using dynamic programming, as in the Viterbi algorithm.
+A Hidden Markov Model is used when a process that follows a Markov model has some emission states that mask the underlying state. For example, consider the problem of finding exons and introns in a gene sequence. While the underlying sequence of exon and intron states can be described by a Markov model, the visible states (A, C, G, and T) do not distinguish between states. HMMs can be solved using dynamic programming, as in the Viterbi algorithm.
 
 We attempted to apply IMMs to the HMM problem of finding exons and introns in a gene sequence. We developed a Hidden Interpolated Markov Model (HIMM) that finds exons and introns more accurately than a normal HMM.
 
@@ -88,7 +88,7 @@ We trained a total of 10 models on 4 different states (orf1, orf2, orf3, intron)
 We trained our model on 10\% of the genes from our dataset and tested on the remaining 90\%.
 
 \subsection{HIMM}
-We used dynamic programming to implement our HIMM. We first construct an empty matrix with 6 rows (one for each state) and a column for each base in the gene to be modeled. We then fill this matrix column by column such that $M_{i,j}$ contains the log-probability of the most likely path from the beginning of the gene to state i for base j. For each state, there are only 2 possible states that can precede it as shown in Figure <<reference>>. We use the Interpolated Markov Model to determine the most likely new state given the preceding kmer and the kmer counts from the training step. The new probability is equal to
+We used dynamic programming to implement our HIMM. We first construct an empty matrix with 6 rows (one for each state) and a column for each base in the gene to be modeled. We then fill this matrix column by column such that $M_{i,j}$ contains the log-probability of the most likely path from the beginning of the gene to state i for base j. For each state, there are only 2 possible states that can precede it as shown in (Figure 1). We use the Interpolated Markov Model to determine the most likely new state given the preceding kmer and the kmer counts from the training step. The new probability is equal to
 
 $$M_{ij} = \max_{k \in states} M_{k,j-1} \cdot Pr\left({S_\ell}_i \mid \left( S_1,...S_{\ell-1}  \right)_k \right)$$
 
@@ -158,7 +158,7 @@ While not mentioned in the original GLIMMER publication, gene identification on 
 
 \subsection{Gene finding with Hidden interpolated Markov Models}
 
-Figure 6 compares the accuracy results for the HIMM and the normal HMM for exon and intron detection. These results were gathered from the D. melanogaster genome. Both models were trained on 10% of the genes and tested on the remaining 90%.
+Figure 6 compares the accuracy results for the HIMM and the normal HMM for exon and intron detection. These results were gathered from the D. melanogaster genome. Both models were trained on 10\% of the genes and tested on the remaining 90\%.
 
 \begin{figure}
 	\begin{center}
