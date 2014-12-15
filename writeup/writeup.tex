@@ -49,7 +49,10 @@ Talk about the implication of matching the coding region with different gene exp
 
 \section{Dataset Overview}
 
-In our project, we first sought to duplicate the results obtained from the original publication of GLIMMER. We also performed a more thorough comparison of IMMs and fixed-length Markov models for ORF classification. For these experiments, we used the H. \emph{Influenzae} genome as in the GLIMMER paper. We also tested the accuracy of our GLIMMER implementation on eukaryotic data. For these experiments, we used the D. \emph{melanogaster} (fruitfly) genome. Finally, we implented an IMM-based Hidden Markov Model for intron detection in eukaryotic genes. We used the D. \emph{melanogaster} genome for this part. All genomes and coding sequences for the organisms listed were retrieved from the GenBank database.
+In our project, we first sought to duplicate the results obtained from the original publication of GLIMMER. We also performed a more thorough comparison of IMMs and fixed-length Markov models for ORF classification. For these experiments, we used the H. \emph{Influenzae} genome as in the GLIMMER paper. In addition to H. influenzae, we also tested our models on the H. \emph{pylori} and the E. \emph{coli} genomes. We wanted to gauge  the performance of the interpolated Markov model on prokaryotic genomes in general.
+
+
+We also tested the accuracy of our GLIMMER implementation on eukaryotic data. For these experiments, we used the D. \emph{melanogaster} (fruitfly) genome. Finally, we implented an IMM-based Hidden Markov Model for intron detection in eukaryotic genes. We used the D. \emph{melanogaster} genome for this part. All genomes and coding sequences for the organisms listed were retrieved from the GenBank database.
 
 \section{Methods}
 \subsection{GLIMMER Implementation}
