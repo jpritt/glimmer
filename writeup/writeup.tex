@@ -26,7 +26,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-
+	We aim to examine the interpolated Markov model for gene identification of prokarytic genomes. The IMM method, originally established in the GLIMMER software is highly accurate in predicting bacterial genes. By implementing an $8^{th}$ order IMM, we came close to replicating the results published in the GLIMMER paper. We used the general Markov chain model as a comparison for our IMM. We find that the interpolated Markov model outperforms the general Markov chain model on almost every organism genome we tested it against. Judging by the successful classification of prokaryotic genes, we tried our IMM algorithm on eukaryotic genomes. However, our IMM failed to achieve accurate measures. We did not stop given the low predictive power of the IMM on eukarytic genome. We sought out an approach involving Hidden interpolated Markov model with state changes evaluated by dynamic programming procedures. Using the HIMM, we were able to identify eukaryotic genes with above 90\% accuracy.
 \end{abstract}
 
 \section{Introduction}
@@ -40,12 +40,8 @@ It is often difficult for a training genome to have sufficient 5mers to provide 
 
 \subsection{Reading Frame and Coding Sequence Description}
 
-The original GLIMMER software first parts the DNA sequence into six different reading frames. Consecutive reading frames share the DNA sequence but differ on which nucleotide is first read. Since each nucleotide triplet specifies a codon during translation, there can be 3 different positions at which we can start reading codons at. And, three more reading frames applies to the reverse complement strand of the DNA. This gives us a total of 6 possible reading frame positions to find starting codons for coding sequences. 
-From each reading frames, multiple open reading frames can be found. Each open reading frame is the DNA sequence that starts with the start codon and ends with the stop codon, without having any stop codon in the middle. However, there can be additional start codons in the reading frame. An ORF would generate a protein sequence once translated. 
-
-\subsection{Why Identification of Coding Region Useful?}
-
-Talk about the implication of matching the coding region with different gene expression
+The GLIMMER software first separates the DNA sequence into six different reading frames. Consecutive reading frames share the DNA sequence but differ on which nucleotide is first read. Since each nucleotide triplet specifies a codon during translation, there can be 3 different positions at which we can start reading codons at. And, three more reading frames applies to the reverse complement strand of the DNA. This gives us a total of 6 possible reading frame positions to find starting codons for coding sequences. 
+From each reading frames, multiple open reading frames can be found. Each open reading frame is the DNA sequence that starts with the start codon and ends with the stop codon, without having any stop codon in the middle. An ORF would generate a protein sequence once translated. It is possible to have additional start codons in the reading frame, but we will not seek to address this issue in our project. 
 
 \section{Dataset Overview}
 
@@ -59,7 +55,7 @@ We also tested the accuracy of our GLIMMER implementation on eukaryotic data. Fo
 
 Interpolated Markov Models are a modification of the Markov model that use a combination of contexts of varying length to obtain higher accuracy than a Markov model with fixed-length context. Fixed-length Markov models are only accurate up to a certain context length, after which data becomes too sparse to obtain accurate probabilities for longer contexts. Interpolated Markov models make up for this shortcoming by only using longer contexts when enough training data is available to yield an accurate probability for the given context. In the worst case, an IMM will perform just as well as a normal Markov model, but in many cases it performs much better. 
 
-Markov models are especially applicable to DNA classification because nucleotides, especially in gene regions, are often highly dependent on the nucleotides that precede them. GLIMMER uses an Interpolated Markov model to classify potential open reading frames (ORFs) as either valid genes or noncoding segments. We implemented the GLIMMER algorithm as described in the original paper <<reference>>. The details of the algorithm can be found in that paper, but we describe the main steps here.
+Markov models are especially applicable to DNA classification because nucleotides, especially in gene regions, are often highly dependent on the nucleotides that precede them. GLIMMER uses an Interpolated Markov model to classify potential open reading frames (ORFs) as either valid genes or noncoding segments. We implemented the GLIMMER algorithm as described in the original paper (Salzberg et al. 1998). The details of the algorithm can be found in that paper, but we describe the main steps here.
 
 \subsubsection{Training}
 Initially, we search the genome for ORFs that are more than 500 nucleotides long. These segments are very likely to be true ORFs, and they form our training set. We collect kmer counts for 7 different possible contexts. These include the 3 reading frames for genes, 3 reading frames for complementary genes (that run backwards in the genome), and 1 context for noncoding regions. For each context, we store a table of counts for every kmer up to the maximum length of our model. For each base in a gene, we store the kmers ending on that base in the table for the context corresponding to the reading frame of that base. For example, consider training a model with a maximum length of 3 on a gene 'ATGGCA...'. First we would increment to count for 'A' in the context for reading frame 1. Next, we would increment the counts for 'T' and 'AT' in the context for reading frame 2. Next, we would increment the counts for 'G', 'TG', and 'ATG' in the context for reading frame 3. Next, we would increment the counts for 'G', 'GG', and 'TGG' in the context for reading frame 1. By having a model for each reading frame, we can find patterns in genes more accurately.
@@ -75,7 +71,7 @@ We hypothesized that the Iterative IMM would yield more accurate results than th
 
 
 \subsection{Exon/Intron Classification with Hidden Interpolated Markov Models}
-One of the goals of our project was to use the Interpolated Markov Models to detect exon and intron regions in a gene. Unlike ORFs, which must begin with 'ATG' and end with a well-defined stop codon, introns may begin and end at arbitrary points in a gene. Thus, we had to construct a Hidden Markov Model (HMM) using the interpolated context. We call this model the Hidden Interpolated Markov Model (HIMM). HIMMs have already been used for gene detection <<reference>>, but we did not refer to any of these papers and developed this model on our own.
+One of the goals of our project was to use the Interpolated Markov Models to detect exon and intron regions in a gene. Unlike ORFs, which must begin with 'ATG' and end with a well-defined stop codon, introns may begin and end at arbitrary points in a gene. Thus, we had to construct a Hidden Markov Model (HMM) using the interpolated context. We call this model the Hidden Interpolated Markov Model (HIMM). HIMMs have already been used for gene detection (Salzberg et al. 1999), but we did not refer to any of these papers and developed this model on our own.
 
 A Hidden Markov Model is used when a process follows a Markov model but the current state of the model is hidden by extra emission states. In our application, the DNA might be in an intron or an exon at any time, but in either case will only output 'A', 'C', 'G' and 'T'. Figure 1 shows the Markov model for this problem. Note that while in an exon, the reading frame will increase by 1 at every base. The gene may enter an intron from any reading frame, but when it reenters and exon it must resume in the same reading frame where it left. We adapted the Viterbi algorithm, which uses dynamic programming, along with our interpolated model to solve this problem.
 
@@ -102,12 +98,12 @@ $$M_{ij} = \max_{k \in states} M_{k,j-1} \cdot Pr\left({S_\ell}_i \mid \left( S_
 
 \section{Results}
 
-As previously mentioned, we are using the complete H. influenzae genome to evaluate the performance of our IMM gene classifier. We ran the IMM algorithm under different training and test settings. We were able to evaluate the model performance at maximum k-mer length between the range 0 to 9. A maximum k-mer length of 0 indicates that we are predicting independently of the preceding nucleotide in the DNA sequence, while a maximum k-mer length of 9 indicates that the current nucleotide’s probability can be dependent upon at most 9 preceding DNA nucleotides. 
+As previously mentioned, we are using the complete H. \emph{influenzae} genome to evaluate the performance of our IMM gene classifier. We ran the IMM algorithm under different training and test settings. We evaluated the model performance at maximum k-mer length between the range 0 to 9. A maximum k-mer length of 0 indicates that predictions are made independently of the preceding nucleotide in the DNA sequence, while a maximum k-mer length of 9 indicates that the current nucleotide’s probability is dependent upon at most 9 preceding DNA nucleotides. 
 
-We implemented and tested fixed-length Markov chain models of orders between 0 and 9 to compare our IMM results against.
+We implemented and tested a fixed-length Markov chain model matching to the order of the IMM in order to compare to our IMM results.
 
 \subsection{Comparison of IMM and Markov chain on H.influenzae data}
-Figure 2 shows how the IMM compares against the Markov chain model at identification of H. influenzae genes at the different model complexities.
+Figure 2 shows how the IMM compares against the Markov chain model at identification of H. \emph{influenzae} genes at the different model complexities.
 
 When running our IMM and Markov chain programs, we imposed the same set of selection criteria as the mentioned in the publication. First, we would rule out all ORF’s that are less than 500 bases long, since longer ORF length are more likely to be coding regions. Next, we impose the constraint that the potential ORFs selected must not overlap one another. 
 
@@ -199,6 +195,21 @@ Salzberg, S.L., Delcher, A.L., Kasif, S. and White, O.
 \newblock 1998.
 \newblock {\em Microbial gene identification using interpolated Markov models}
 \newblock Nucleic Acids Research: Oxford University Press.
+
+\bibitem[\protect\citename{Salzberg,S.L., Pertea,M., Delcher,A.L., Gardner,M.J. and
+	Tettelin,H.}1999]{}
+Salzberg,S.L., Pertea,M., Delcher,A.L., Gardner,M.J. and
+Tettelin,H.
+\newblock 1999.
+\newblock {\em Interpolated Markov models for eukaryotic
+	gene finding}
+\newblock Genomics, 59, 24–31.
+
+\bibitem[\protect\citename{Henderson, J., Salzberg, S.L., and Fasman K.}1996]{}
+Henderson, J., Salzberg, S.L., and Fasman K.
+\newblock 1996.
+\newblock {\em Finding Genes in DNA with a Hidden Markov Model}
+\newblock Journal of Computational Biology.
 
 \end{thebibliography}
 

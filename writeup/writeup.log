@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 21:26
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 22:39
 entering extended mode
 **writeup.tex
 
@@ -446,6 +446,9 @@ LaTeX Warning: Label `font-table' multiply defined.
 LaTeX Warning: Label `font-table' multiply defined.
 
 
+LaTeX Warning: Label `' multiply defined.
+
+
 LaTeX Warning: Label `font-table' multiply defined.
 
 )
@@ -521,68 +524,67 @@ Underfull \hbox (badness 10000) in paragraph at lines 36--37
  []
 
 
-Underfull \hbox (badness 1158) in paragraph at lines 43--45
-\OT1/ptm/m/n/10.95 Con-sec-u-tive read-ing frames share the DNA se-
- []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
+ [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
 
 
 
 
 ]
-Underfull \hbox (badness 2326) in paragraph at lines 62--63
+Underfull \hbox (badness 2326) in paragraph at lines 58--59
 \OT1/ptm/m/n/10.95 clas-si-fi-ca-tion be-cause nu-cleotides, es-pe-cially in
  []
 
-
-Underfull \vbox (badness 2020) has occurred while \output is active []
-
- [2]
-<HMM.png, id=18, 471.7625pt x 377.41pt>
+[2] <HMM.png, id=19, 471.7625pt x 377.41pt>
 File: HMM.png Graphic file (type png)
  <use HMM.png>
-Package pdftex.def Info: HMM.png used on input line 84.
+Package pdftex.def Info: HMM.png used on input line 80.
 (pdftex.def)             Requested size: 188.70164pt x 150.96132pt.
- [3 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
-up/HMM.png>]
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no ™ in font ptmr7t!
+ [3]
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
 
-<plots/accuracy_vs_model_complexity.png, id=23, 262.581pt x 234.8775pt>
+Underfull \hbox (badness 6204) in paragraph at lines 103--104
+[]\OT1/ptm/m/n/10.95 We im-ple-mented and tested a fixed-length
+ []
+
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no ™ in font ptmr7t!
+<plots/accuracy_vs_model_complexity.png, id=24, 262.581pt x 234.8775pt>
 File: plots/accuracy_vs_model_complexity.png Graphic file (type png)
 
 <use plots/accuracy_vs_model_complexity.png>
 Package pdftex.def Info: plots/accuracy_vs_model_complexity.png used on input l
-ine 116.
+ine 112.
 (pdftex.def)             Requested size: 210.06506pt x 187.90225pt.
-
-<plots/runtime_vs_model_complexity.png, id=25, 292.09125pt x 168.63pt>
+ [4 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
+up/HMM.png> <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimm
+er/writeup/plots/accuracy_vs_model_complexity.png>]
+<plots/runtime_vs_model_complexity.png, id=32, 292.09125pt x 168.63pt>
 File: plots/runtime_vs_model_complexity.png Graphic file (type png)
 
 <use plots/runtime_vs_model_complexity.png>
 Package pdftex.def Info: plots/runtime_vs_model_complexity.png used on input li
-ne 125.
+ne 121.
 (pdftex.def)             Requested size: 233.6733pt x 134.90417pt.
 
-Overfull \hbox (6.02269pt too wide) in paragraph at lines 125--126
+Overfull \hbox (6.02269pt too wide) in paragraph at lines 121--122
  [] 
  []
 
 
-<plots/false_positives_vs_model_complexity.png, id=26, 289.08pt x 170.43675pt>
+<plots/false_positives_vs_model_complexity.png, id=33, 289.08pt x 170.43675pt>
 File: plots/false_positives_vs_model_complexity.png Graphic file (type png)
 
 <use plots/false_positives_vs_model_complexity.png>
 Package pdftex.def Info: plots/false_positives_vs_model_complexity.png used on 
-input line 134.
+input line 130.
 (pdftex.def)             Requested size: 231.2643pt x 136.34956pt.
 
-Overfull \hbox (3.6137pt too wide) in paragraph at lines 134--135
+Overfull \hbox (3.6137pt too wide) in paragraph at lines 130--131
  [] 
  []
 
@@ -590,25 +592,21 @@ Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
 
-Underfull \hbox (badness 5133) in paragraph at lines 159--160
+Underfull \hbox (badness 5133) in paragraph at lines 155--156
 \OT1/ptm/m/n/10.95 While not men-tioned in the orig-i-nal GLIM-
  []
 
 
-Underfull \vbox (badness 6927) has occurred while \output is active []
-
- [4 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
-up/plots/accuracy_vs_model_complexity.png>]
-<plots/accuracy_vs_model_complexity_drosophila.png, id=33, 300.52275pt x 222.23
+<plots/accuracy_vs_model_complexity_drosophila.png, id=34, 300.52275pt x 222.23
 026pt>
 File: plots/accuracy_vs_model_complexity_drosophila.png Graphic file (type png)
 
  <use plots/accuracy_vs_model_complexity_drosophila.png>
 Package pdftex.def Info: plots/accuracy_vs_model_complexity_drosophila.png used
- on input line 163.
+ on input line 159.
 (pdftex.def)             Requested size: 240.41852pt x 177.78444pt.
 
-Overfull \hbox (12.76791pt too wide) in paragraph at lines 163--164
+Overfull \hbox (12.76791pt too wide) in paragraph at lines 159--160
  [] 
  []
 
@@ -616,26 +614,26 @@ Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
 
-<plots/accuracy_vs_model_complexity_drosophila_hmm.png, id=34, 295.70474pt x 19
+<plots/accuracy_vs_model_complexity_drosophila_hmm.png, id=35, 295.70474pt x 19
 3.9245pt>
 File: plots/accuracy_vs_model_complexity_drosophila_hmm.png Graphic file (type 
 png)
  <use plots/accuracy_vs_model_complexity_drosophila_hmm.png>
 Package pdftex.def Info: plots/accuracy_vs_model_complexity_drosophila_hmm.png 
-used on input line 175.
+used on input line 171.
 (pdftex.def)             Requested size: 236.5641pt x 155.13979pt.
 
-Overfull \hbox (8.9135pt too wide) in paragraph at lines 175--176
+Overfull \hbox (8.9135pt too wide) in paragraph at lines 171--172
  [] 
  []
 
 
-Underfull \hbox (badness 5077) in paragraph at lines 177--177
+Underfull \hbox (badness 5077) in paragraph at lines 173--173
 []\OT1/ptm/m/n/10 Figure 6: []Ac-cu-racy com-par-i-son for HIMM and
  []
 
 
-Underfull \hbox (badness 1137) in paragraph at lines 177--177
+Underfull \hbox (badness 1137) in paragraph at lines 173--173
 \OT1/ptm/m/n/10 HMM mod-els at dif-fer-ent model com-plex-ity for \OT1/ptm/m/it
 /10 D.
  []
@@ -651,9 +649,9 @@ Missing character: There is no ™ in font ptmr7t!
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no “ in font ptmr7t!
  [6 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
 up/plots/accuracy_vs_model_complexity_drosophila_hmm.png>]
 ("C:\Users\YongFang\Desktop\Academics\Machine learning\project\glimmer\writeup\
@@ -663,10 +661,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 11663 strings out of 493921
- 234252 string characters out of 3144866
- 265849 words of memory out of 3000000
- 14733 multiletter control sequences out of 15000+200000
+ 11664 strings out of 493921
+ 234254 string characters out of 3144866
+ 265902 words of memory out of 3000000
+ 14734 multiletter control sequences out of 15000+200000
  22331 words of font info for 57 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  55i,10n,54p,1306b,273s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -682,7 +680,7 @@ TeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX
 s/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw
 /times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmr
 i8a.pfb>
-Output written on writeup.pdf (6 pages, 222449 bytes).
+Output written on writeup.pdf (6 pages, 224259 bytes).
 PDF statistics:
  78 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
