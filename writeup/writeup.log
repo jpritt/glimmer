@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 20:24
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.25)  14 DEC 2014 20:51
 entering extended mode
 **writeup.tex
 
@@ -442,6 +442,9 @@ LaTeX Warning: Label `font-table' multiply defined.
 
 LaTeX Warning: Label `font-table' multiply defined.
 
+
+LaTeX Warning: Label `font-table' multiply defined.
+
 )
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
@@ -644,22 +647,60 @@ Underfull \hbox (badness 5133) in paragraph at lines 174--175
  []
 
 
-<plots/accuracy_vs_model_complexity_drosophila.png, id=31, 299.9205pt x 221.628
-pt>
+<plots/accuracy_vs_model_complexity_drosophila.png, id=31, 300.52275pt x 222.23
+026pt>
 File: plots/accuracy_vs_model_complexity_drosophila.png Graphic file (type png)
 
  <use plots/accuracy_vs_model_complexity_drosophila.png>
 Package pdftex.def Info: plots/accuracy_vs_model_complexity_drosophila.png used
  on input line 178.
-(pdftex.def)             Requested size: 239.9367pt x 177.30263pt.
+(pdftex.def)             Requested size: 240.41852pt x 177.78444pt.
 
-Overfull \hbox (12.2861pt too wide) in paragraph at lines 178--179
+Overfull \hbox (12.76791pt too wide) in paragraph at lines 178--179
  [] 
  []
 
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.187 \\T
+         ODO
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+<plots/accuracy_vs_model_complexity_drosophila_hmm.png, id=32, 295.70474pt x 19
+3.9245pt>
+File: plots/accuracy_vs_model_complexity_drosophila_hmm.png Graphic file (type 
+png)
+ <use plots/accuracy_vs_model_complexity_drosophila_hmm.png>
+Package pdftex.def Info: plots/accuracy_vs_model_complexity_drosophila_hmm.png 
+used on input line 191.
+(pdftex.def)             Requested size: 236.5641pt x 155.13979pt.
+
+Overfull \hbox (8.9135pt too wide) in paragraph at lines 191--192
+ [] 
+ []
+
+
+Underfull \hbox (badness 5077) in paragraph at lines 193--193
+[]\OT1/ptm/m/n/10 Figure 6: []Ac-cu-racy com-par-i-son for HIMM and
+ []
+
+
+Underfull \hbox (badness 1137) in paragraph at lines 193--193
+\OT1/ptm/m/n/10 HMM mod-els at dif-fer-ent model com-plex-ity for \OT1/ptm/m/it
+/10 D.
+ []
+
 
 Underfull \vbox (badness 1052) has occurred while \output is active []
 
@@ -675,7 +716,9 @@ Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
  [5 <C:/Users/YongFang/Desktop/Academics/Machine learning/project/glimmer/write
-up/plots/accuracy_vs_model_complexity_drosophila.png>]
+up/plots/accuracy_vs_model_complexity_drosophila.png> <C:/Users/YongFang/Deskto
+p/Academics/Machine learning/project/glimmer/writeup/plots/accuracy_vs_model_co
+mplexity_drosophila_hmm.png>]
 ("C:\Users\YongFang\Desktop\Academics\Machine learning\project\glimmer\writeup\
 writeup.aux")
 
@@ -683,10 +726,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 11720 strings out of 493921
- 235339 string characters out of 3144866
+ 11725 strings out of 493921
+ 235617 string characters out of 3144866
  265867 words of memory out of 3000000
- 14787 multiletter control sequences out of 15000+200000
+ 14791 multiletter control sequences out of 15000+200000
  25201 words of font info for 65 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  55i,10n,54p,1306b,731s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -705,9 +748,9 @@ nts/type1/urw/courier/ucrr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
 /urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/
 utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb
 >
-Output written on writeup.pdf (5 pages, 201617 bytes).
+Output written on writeup.pdf (5 pages, 218914 bytes).
 PDF statistics:
- 84 PDF objects out of 1000 (max. 8388607)
+ 86 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 33 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -182,6 +182,17 @@ While not mentioned in the original GLIMMER publication, gene identification on 
 
 We noticed the poor gene identification accuracy. This result is expected, since Eukaryotic genomes are much more complex than that of Prokaryote’s. For example, the extra non-coding intron sequences and the regulatory sequences such as promoters and enhancers increase the noise which our gene identifier has to go through. 
 
+\subsection{Gene finding on with interpolated Hidden Markov Models}
+
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.8]{plots/accuracy_vs_model_complexity_drosophila_hmm.png}
+	\end{center}
+	\caption{\label{font-table} Accuracy comparison for HIMM and HMM models at different model complexity for \emph{D. melanogaster} genome}
+\end{figure}
+
+
 \section{Discussion}
 
 When comparing our 8th order IMM results against the same model as used in the publication, we notice that our accuracy value, of 93.78 \%, differs from the accuracy of 97.8 \% reported. There are several reasons that might have caused this difference.
