@@ -2,6 +2,7 @@
 import math
 import numpy as np
 import scipy.stats
+import sys
 
 class HIMM(object):
     ''' Simple Hidden Markov Model implementation.  User provides
@@ -48,6 +49,16 @@ class HIMM(object):
             self.immProbs.append([])
             for j in xrange(self.maxLength+1):
                 self.immProbs[i].append(dict())
+
+        self.interpolated = True
+        self.fixedLength = 0
+
+    def setFixedLength(self, length):
+        self.interpolated = False
+        self.fixedLength = length
+
+    def setInterpolated(self):
+        self.interpolated = True
     
     def viterbi(self, x):
         ''' Given sequence of emissions, return the most probable path
@@ -61,37 +72,94 @@ class HIMM(object):
 
         # Fill in first column
         # Every gene starts in exon_rf1
-        mat[0, 0] = 0
-        for i in xrange(1, nrow):
-            mat[i, 0] = -100000
+        if self.interpolated:
+            mat[0, 0] = 0
+            for i in xrange(1, nrow):
+                mat[i, 0] = -100000
+            startBase = 1
+        else:
+            for j in xrange(self.fixedLength):
+                mat[0, j] = 0
+                for i in xrange(1, nrow):
+                    mat[i, j] = -100000
+            startBase = self.fixedLength
 
         # Fill in rest of log prob and Tb tables
-        for j in xrange(1, ncol):
-            length = min(j, self.maxLength)
+        for j in xrange(startBase, ncol):
+            if self.interpolated:
+                length = min(j, self.maxLength)
+            else:
+                length = self.fixedLength
+
+            #if j > 885 and j < 890:
+            #    print 'j = %d' % j
+
             for newState in xrange(0, nrow):
                 # Exonic states
                 if newState < 3:
                     # possible previous states: (newState-1)%3, (newState-1)%3 + 3
-                    probA = mat[i-1, (newState-1)%3] + math.log(self.imm((newState-1)%3, newState, x[j-length:j+1]), 2) + self.probSwitch[0][0]
-                    probB = mat[i-1, (newState-1)%3+3] + math.log(self.imm(3, newState, x[j-length:j+1]), 2) + self.probSwitch[1][0]
+                    #if self.interpolated:
+                    #print 'Calculating imm(%d)' % (x[j-length:j+1])
+                    probA = mat[(newState-1)%3, j-1] + math.log(self.imm((newState-1)%3, newState, x[j-length:j+1]), 2)
+                    probB = mat[(newState-1)%3+3, j-1] + math.log(self.imm(3, newState, x[j-length:j+1]), 2)
+                    #else:
+                    #    probsA = self.getProbs((newState-1)%3, x[j-length:j])
+                    #    probA = mat[(newState-1)%3, j-1] + math.log(probsA[x[j]], 2)
+
+                    #    probsB = self.getProbs(3, x[j-length:j])
+                    #    probB = mat[(newState-1)%3+3, j-1] + math.log(probsB[x[j]], 2)
+
+                    #print '  State %d:' % newState
+                    #print '    %d --> %f (%f + %f)' % ((newState-1)%3, probA, mat[(newState-1)%3, j-1], math.log(self.imm((newState-1)%3, newState, x[j-length:j+1]), 2))
+                    #print '    %d --> %f (%f + %f)' % ((newState-1)%3+3, probB, mat[(newState-1)%3+3, j-1], math.log(self.imm(3, newState, x[j-length:j+1]), 2))
                     if probA > probB:
-                        mat[i, j] = probA
-                        matTb[i, j] = (newState-1)%3
+                        mat[newState, j] = probA
+                        matTb[newState, j] = (newState-1)%3
                     else:
-                        mat[i, j] = probB
-                        matTb[i, j] = (newState-1)%3 + 3
+                        mat[newState, j] = probB
+                        matTb[newState, j] = (newState-1)%3 + 3
 
                 # Intronic states
                 else:
                     # possible previous states: newState-3, newState
-                    probA = mat[i-1, newState-3] + math.log(self.imm(newState-3, 3, x[j-length:j+1]), 2) + self.probSwitch[0][1]
-                    probB = mat[i-1, newState] + math.log(self.imm(3, 3, x[j-length:j+1]), 2) + self.probSwitch[0][0]
+                    #if self.interpolated:
+                    probA = mat[newState-3, j-1] + math.log(self.imm(newState-3, 3, x[j-length:j+1]), 2)
+                    probB = mat[newState, j-1] + math.log(self.imm(3, 3, x[j-length:j+1]), 2)
+                    #else:
+                    #    probsA = self.getProbs(newState-3, x[j-length:j])
+                    #    probA = mat[newState-3, j-1] + math.log(probsA[x[j].lower()], 2)
+
+                    #    probsB = self.getProbs(3, x[j-length:j])
+                    #    probB = mat[newState, j-1] + math.log(probsB[x[j].lower()], 2)
+
+
+                    #print '  State %d:' % newState
+                    #print '    %d --> %f' % (newState-3, probA)
+                    #print '    %d --> %f' % (newState, probB)
+
                     if probA > probB:
-                        mat[i, j] = probA
-                        matTb[i, j] = newState-3
+                        mat[newState, j] = probA
+                        matTb[newState, j] = newState-3
                     else:
-                        mat[i, j] = probB
-                        matTb[i, j] = newState
+                        mat[newState, j] = probB
+                        matTb[newState, j] = newState
+
+        '''
+        for i in xrange(6):
+            for j in xrange(16,26):
+                sys.stdout.write('%0.2f\t' % mat[i,j])
+                #sys.stdout.write(str(mat[i,j]) + '\t')
+            print ''
+        print ''
+        for i in xrange(6):
+            for j in xrange(16,26):
+                sys.stdout.write('%d\t' % matTb[i,j])
+                #sys.stdout.write(str(matTb[i,j]) + '\t')
+            print ''
+        print ''
+        exit()
+        '''
+        
 
         # Find final state with maximal log probability
         maxProb = mat[0, ncol-1]
@@ -123,43 +191,69 @@ class HIMM(object):
 
         prefix = seq[:-1]
 
+
         if len(seq) == 1:
-            probs = [0]*4
-            for i in xrange(4):
-                self.immProbs[oldState][0][self.nts[i]] = self.singleProb(newState, self.nts[i])
+            probs = self.getProbs(oldState, '')
+            totalProb = 0
+            for k in probs.keys():
+                totalProb += probs[k]
+
+            for n in self.stateNTs:
+                self.immProbs[oldState][0][n] = float(probs[n]) / totalProb
+
             return self.immProbs[oldState][0][seq]
 
         length = len(seq)-1
-        if prefix in self.counts[oldState][length-1] and self.counts[oldState][length-1][prefix] > self.countThreshold:
-            wgt = 1
-        else:
-            probs = self.getProbs(oldState, prefix)
 
-            currProbs = []
-            nextProbs = []
-            for n in self.stateNTs:
-                currProbs.append(probs[n])
-                nextProbs.append(self.imm(oldState, newState, prefix[1:]+n))
-            
-            d = scipy.stats.chi2_contingency(np.array([currCounts, nextProbs]))[1]
+        if self.interpolated:
+            relCount = 0
+            for s in self.nextStates[oldState]:
+                if prefix in self.counts[oldState][s][len(prefix)-1]:
+                    relCount += self.counts[oldState][s][len(prefix)-1][prefix]
 
-            if d < 0.5:
-                wgt = 0
+            if relCount > self.countThreshold:
+                wgt = 1
             else:
-                if prefix in self.counts[oldState][newState][length-1]:
-                    wgt = d * self.counts[oldState][newState][length-1][prefix] / self.countThreshold
-                else:
+                probs = self.getProbs(oldState, prefix)
+
+                currProbs = []
+                nextProbs = []
+                for n in self.stateNTs:
+                    currProbs.append(probs[n])
+
+                    if n.islower():
+                        newS = self.nextStates[oldState][1]
+                    else:
+                        newS = self.nextStates[oldState][0]
+                    nextProbs.append(self.imm(oldState, newS, prefix[1:]+n))
+                
+                d = scipy.stats.chi2_contingency(np.array([currProbs, nextProbs]))[1]
+
+                if d < 0.5:
                     wgt = 0
+                else:
+                    wgt = d * relCount / self.countThreshold
+        else:
+            wgt = 1
 
         probs = self.getProbs(oldState, prefix)
+        totalProb = 0
         for k in probs.keys():
-            probs[i] = wgt * probs[k] + (1-wgt) * self.imm(oldState, newState, prefix[1:]+self.nts[i])
-        totalProb = sum(probs)
+            if k.islower():
+                newS = self.nextStates[oldState][1]
+            else:
+                newS = self.nextStates[oldState][0]
 
-        for i in xrange(4):
-            self.immProbs[oldState][newState][len(seq)-1][prefix+self.nts[i]] = float(probs[i]) / totalProb
+            if wgt == 0:
+                probs[k] = self.imm(oldState, newS, prefix[1:]+k)
+            elif wgt < 1:
+                probs[k] = wgt * probs[k] + (1-wgt) * self.imm(oldState, newS, prefix[1:]+k)
+            totalProb += probs[k]
 
-        return self.immProbs[oldState][newState][len(seq)-1][seq]
+        for n in self.stateNTs:
+            self.immProbs[oldState][len(seq)-1][prefix+n] = float(probs[n]) / totalProb
+
+        return self.immProbs[oldState][len(seq)-1][seq]
 
     def getProbs(self, oldState, prefix):
         #if newState > 3:
@@ -168,7 +262,7 @@ class HIMM(object):
         #if not newState in self.nextStates[oldState]:
         #    return None
 
-        length = len(seq)-1
+        length = len(prefix)
 
         # Count all possible next nucleotides, with +1 smoothing
         counts = dict()
@@ -179,16 +273,16 @@ class HIMM(object):
                     stateN = n
                 else:
                     stateN = n.lower()
-                
-                if seq[:-1]+n in self.counts[oldState][i][length]:
-                    counts[stateN] =  1 + self.counts[oldState][i][length][seq[:-1]+n]
+
+                if (prefix+n) in self.counts[oldState][i][length]:
+                    counts[stateN] =  1 + self.counts[oldState][i][length][prefix+n]
                 else:
                     counts[stateN] =  1
                 totalCount += counts[stateN]
 
         for k in counts.keys():
             counts[k] = float(counts[k]) / totalCount
-        return probs
+        return counts
 
     '''
     def prob(self, oldState, newState, seq):

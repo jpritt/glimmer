@@ -48,7 +48,7 @@ class HIMMTrain:
             else:
                 newState = 3
 
-            for l in xrange(1, min(i, self.maxLength)):
+            for l in xrange(min(i, self.maxLength+1)):
                 seq = gene[i-l:i+1]
                 if seq in self.counts[prevState][newState][l]:
                     self.counts[prevState][newState][l][seq] += 1

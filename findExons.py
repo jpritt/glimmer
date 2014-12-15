@@ -4,13 +4,15 @@ import himm
 import himmTrain
 import time
 
-def runHIMM(genome, trainGenes, testGenes, maxLength):
+def runHIMM(genome, trainGenes, testGenes, maxLength, fixed):
     trainer = himmTrain.HIMMTrain(maxLength)
 
     for gene in trainGenes:
         trainer.train(genome[gene[0]:gene[1]], gene[2])
 
     model = himm.HIMM(trainer.counts, trainer.singleProbs, trainer.getProbSwitch(), maxLength)
+    if fixed:
+        model.setFixedLength(maxLength)
 
     totalCorrect = 0
     totalBases = 0
@@ -26,6 +28,10 @@ def runHIMM(genome, trainGenes, testGenes, maxLength):
         totalTime += endTime - startTime
         totalLen += gene[1] - gene[0]
 
+        #print gene[2][:125]
+        #print predictedMask[:125]
+        #print ''
+
         totalBases += len(gene[2])
         correct = 0
         for i in xrange(len(gene[2])):
@@ -35,18 +41,18 @@ def runHIMM(genome, trainGenes, testGenes, maxLength):
 
         n += 1
         
-        if True:#n % 10 == 0:
-            #print 'Finished %d' % (n, len(testGenes))
-            print '  Accuracy: %0.2f (%d, %0.2fs)' % (float(correct)/float(len(gene[2])), gene[1]-gene[0], endTime-startTime)
-            #print '  Accuracy: %0.2f' % (float(totalCorrect)/float(totalBases))
-            #print '  Time per gene: %0.2f s' % (totalTime / n)
-            #print '  Average gene length: %0.1f' % (totalLen / n)
-        if n >= 100:
+        #if n % 100 == 0:
+        #    print 'Finished %d/%d' % (n, len(testGenes))
+        #    #print '  Accuracy: %0.2f (%d, %0.2fs)' % (float(correct)/float(len(gene[2])), gene[1]-gene[0], endTime-startTime)
+        #    print '  Accuracy: %0.2f' % (float(totalCorrect)/float(totalBases))
+        #    print '  Time per gene: %0.2f s' % (totalTime / n)
+        #    print '  Average gene length: %0.1f' % (totalLen / n)
+        if n % 1000 == 0:
             break
 
-    print '\nFinal Accuracy: %0.2f' % (float(totalCorrect)/float(totalBases))
-    print 'Average time per gene: %0.2f s' % (totalTime / len(testGenes))
-    print 'Average gene length: %0.1f' % (totalLen / len(testGenes))
+    print '  Final Accuracy: %0.2f' % (float(totalCorrect)/float(totalBases))
+    print '  Average time per gene: %0.2f s' % (totalTime / n)
+    print '  Average gene length: %0.1f' % (totalLen / n)
 
 def readGenes(filename):
     genes = set()
@@ -79,5 +85,12 @@ def readFASTA(filename):
 
 genome = readFASTA(sys.argv[1])
 genes = readGenes(sys.argv[2])
+
 trainSize = len(genes) / 10
-runHIMM(genome, genes[:trainSize], genes[trainSize:], 6)
+for i in xrange(0,10):
+    print 'Length = %d' % i
+    print 'HIMM:'
+    runHIMM(genome, genes[:trainSize], genes[trainSize:], i, False)
+    print 'HMM:'
+    runHIMM(genome, genes[:trainSize], genes[trainSize:], i, True)
+    print ''

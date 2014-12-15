@@ -1,140 +1,36 @@
 Markov Chain length 0:
-  1089.84s total (57.60s to build, 1032.24s to run)
+  778.67s total (58.09s to build, 720.58s to run)
   0 approved, 0 suspected ORFs found
     % found: 0.00 (0)
     Genes missed: 1174
     Additional genes: 0
 
 Markov Chain length 1:
-  1238.88s total (57.62s to build, 1181.26s to run)
-  9770 approved, 22 suspected ORFs found
+  882.57s total (57.47s to build, 825.11s to run)
+  90 approved, 0 suspected ORFs found
     % found: 0.00 (0)
     Genes missed: 1174
-    Additional genes: 9792
+    Additional genes: 90
 
 Markov Chain length 2:
-  1253.61s total (57.84s to build, 1195.77s to run)
-  3031 approved, 42 suspected ORFs found
+  890.37s total (57.92s to build, 832.45s to run)
+  636 approved, 2 suspected ORFs found
     % found: 0.00 (0)
     Genes missed: 1174
-    Additional genes: 3073
+    Additional genes: 638
 
 Markov Chain length 3:
-  1336.49s total (57.75s to build, 1278.74s to run)
-  9246 approved, 315 suspected ORFs found
-    % found: 0.09 (1)
-    Genes missed: 1173
-    Additional genes: 9560
+  949.69s total (58.03s to build, 891.66s to run)
+  1615 approved, 42 suspected ORFs found
+    % found: 0.00 (0)
+    Genes missed: 1174
+    Additional genes: 1657
 
 Markov Chain length 4:
-  1303.94s total (57.69s to build, 1246.25s to run)
-  18395 approved, 954 suspected ORFs found
-    % found: 0.26 (3)
-    Genes missed: 1171
-    Additional genes: 19346
+  927.71s total (58.09s to build, 869.62s to run)
+  4275 approved, 167 suspected ORFs found
+    % found: 0.09 (1)
+    Genes missed: 1173
+    Additional genes: 4441
 
 Markov Chain length 5:
-  1353.26s total (58.68s to build, 1294.58s to run)
-  26988 approved, 1950 suspected ORFs found
-    % found: 0.26 (3)
-    Genes missed: 1171
-    Additional genes: 28935
-
-Markov Chain length 6:
-  1408.19s total (58.12s to build, 1350.07s to run)
-  43551 approved, 4905 suspected ORFs found
-    % found: 0.17 (2)
-    Genes missed: 1172
-    Additional genes: 48454
-
-Markov Chain length 7:
-  1383.03s total (56.74s to build, 1326.29s to run)
-  50821 approved, 4035 suspected ORFs found
-    % found: 0.17 (2)
-    Genes missed: 1172
-    Additional genes: 54854
-
-Markov Chain length 8:
-  1311.09s total (57.20s to build, 1253.89s to run)
-  58983 approved, 4274 suspected ORFs found
-    % found: 0.34 (4)
-    Genes missed: 1170
-    Additional genes: 63253
-
-Markov Chain length 9:
-  1183.98s total (57.09s to build, 1126.90s to run)
-  70558 approved, 7797 suspected ORFs found
-    % found: 0.51 (6)
-    Genes missed: 1168
-    Additional genes: 78349
-
-IMM max length 0:
-  481.46s total (58.33s to build, 423.13s to run)
-  0 approved, 0 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 0
-
-IMM max length 1:
-  505.14s total (59.58s to build, 445.56s to run)
-  703 approved, 0 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 703
-
-IMM max length 2:
-  508.31s total (60.85s to build, 447.47s to run)
-  132 approved, 0 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 132
-
-IMM max length 3:
-  513.99s total (62.35s to build, 451.64s to run)
-  643 approved, 14 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 657
-
-IMM max length 4:
-  522.47s total (63.92s to build, 458.55s to run)
-  1390 approved, 76 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 1466
-
-IMM max length 5:
-  561.27s total (66.10s to build, 495.17s to run)
-  2730 approved, 266 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 2996
-
-IMM max length 6:
-  602.68s total (67.67s to build, 535.02s to run)
-  3995 approved, 484 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 4479
-
-IMM max length 7:
-  644.53s total (70.42s to build, 574.11s to run)
-  4495 approved, 552 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 5047
-
-IMM max length 8:
-  752.88s total (72.59s to build, 680.29s to run)
-  4706 approved, 569 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 5275
-
-IMM max length 9:
-  1145.11s total (75.14s to build, 1069.97s to run)
-  4783 approved, 581 suspected ORFs found
-    % found: 0.00 (0)
-    Genes missed: 1174
-    Additional genes: 5364
-
